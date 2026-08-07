@@ -30,7 +30,26 @@ The overarching architectural thesis of this portfolio — engineered to make an
 
 ---
 
-## 📸 Automated CI/CD Integration Test Results
+## 📸 1. Infrastructure Evidence & Deployment Screenshots
+
+### ✅ Evidence 1: Bootstrap of K3s ARM64 Cluster (`v1.36.3+k3s1`)
+The K3s cluster was provisioned on the `saasdeploy` ARM64 node with an active control plane and non-root `kubectl` credentials.
+
+![K3s Cluster Installation Evidence](./images/k3s_install.png)
+
+---
+
+### ✅ Evidence 2: GitHub Actions Self-Hosted Runner Service (`saasdeploy`)
+The runner was registered under the `Default` group and configured as a persistent `systemd` daemon, enabling secure zero-downtime GitOps deployments directly on the node without exposing port 6443 to the public internet.
+
+![GitHub Actions Self-Hosted Runner Evidence](./images/git_actions_runner_config.png)
+
+---
+
+### ✅ Evidence 3: Automated Post-Deployment Integration Test Suite
+Every GitOps deployment executes an automated multi-stage integration test suite validating PostgreSQL connectivity/seeds, Granite Guardian 2B classifier endpoints, and NVIDIA NeMo Guardrails Server policy status.
+
+![GitHub Actions Automated Integration Tests Result](./images/github_actions_test_results.png)
 
 ```text
 ========================================================================
@@ -76,7 +95,7 @@ Rather than invoking an expensive generalist LLM (like GPT-4o) for simple safety
 
 ---
 
-## 🏛️ 1. Architecture Decisions & Technical Trade-offs
+## 🏛️ 2. Architecture Decisions & Technical Trade-offs
 
 ### ❓ Why K3s instead of Traditional Upstream Kubernetes (EKS / GKE / K8s)?
 
@@ -91,7 +110,7 @@ In an edge infrastructure environment with strict hardware memory constraints (1
 
 ---
 
-## 🛠️ 2. K3s Manifests & Directory Structure (GitOps)
+## 🛠️ 3. K3s Manifests & Directory Structure (GitOps)
 
 ```text
 guardrails-edge-infra/
@@ -117,13 +136,14 @@ guardrails-edge-infra/
 │   └── kustomization.yaml           # Kustomize orchestrator
 ├── images/
 │   ├── k3s_install.png              # K3s installation proof
-│   └── git_actions_runner_config.png # GitHub Actions runner registration proof
+│   ├── git_actions_runner_config.png # GitHub Actions runner registration proof
+│   └── github_actions_test_results.png # Automated integration tests proof
 └── README.md
 ```
 
 ---
 
-## 🔄 3. Continuous Integration & GitOps Deployment Pipeline
+## 🔄 4. Continuous Integration & GitOps Deployment Pipeline
 
 This repository leverages a **GitHub Actions Self-Hosted Runner** running as a `systemd` background service on the `saasdeploy` node.
 

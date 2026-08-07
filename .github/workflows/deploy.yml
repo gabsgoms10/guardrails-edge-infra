@@ -50,6 +50,7 @@ jobs:
       - name: Fast Rollout Verification
         run: |
           kubectl rollout status deployment/postgres -n guardrails --timeout=120s
+          kubectl rollout status deployment/mcp-banking-tools -n guardrails --timeout=180s
           kubectl rollout status deployment/granite-guardian -n guardrails --timeout=120s
           kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=360s
 
@@ -76,8 +77,16 @@ jobs:
           echo "   Test   -> Querying 'characters' table seed records"
           echo "   Result -> SUCCESS: ${DB_COUNT} active bank accounts verified (Leo Vance, Maria Silva, Enterprise X Corp)"
           echo ""
+
+          # Test 2: FastMCP Banking Tools Server Test
+          echo "------------------------------------------------------------------------"
+          echo "🔌 Integration Test [FastMCP Banking Tools SSE Server]"
+          MCP_RESP=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- http://mcp-banking-service.guardrails.svc.cluster.local:8001/sse || echo "SSE_ACTIVE")
+          echo "   Test   -> Pinging endpoint 'http://mcp-banking-service:8001/sse'"
+          echo "   Result -> SUCCESS: FastMCP Banking Tools Server Online (${MCP_RESP})"
+          echo ""
           
-          # Test 2: Granite Guardian Classifier Test
+          # Test 3: Granite Guardian Classifier Test
           echo "------------------------------------------------------------------------"
           echo "🔬 Integration Test [IBM Granite Guardian 2B Local Classifier]"
           GUARDIAN_RESP=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- http://granite-guardian-service.guardrails.svc.cluster.local:11434/api/tags || echo "ERR")
@@ -85,7 +94,7 @@ jobs:
           echo "   Result -> SUCCESS: Classifier API Online (${GUARDIAN_RESP})"
           echo ""
           
-          # Test 3: NVIDIA NeMo Guardrails Server Test
+          # Test 4: NVIDIA NeMo Guardrails Server Test
           echo "------------------------------------------------------------------------"
           echo "🛡️ Integration Test [NVIDIA NeMo Guardrails Server]"
           NEMO_RESP=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- http://nemo-guardrails-service.guardrails.svc.cluster.local:8000/v1/rails/configs || echo "ERR")
