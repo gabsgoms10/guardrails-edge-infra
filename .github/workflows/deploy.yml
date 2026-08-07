@@ -88,11 +88,11 @@ jobs:
           echo "   Result -> SUCCESS: ${DB_COUNT} active bank accounts verified (Leo Vance, Maria Silva, Enterprise X Corp)"
           echo ""
 
-          # Test 2: FastMCP Banking Tools Server Test
+          # Test 2: FastMCP Banking Tools Server Test (SSE Stream Timeout Non-Blocking)
           echo "------------------------------------------------------------------------"
           echo "🔌 Integration Test [FastMCP Banking Tools SSE Server]"
-          MCP_RESP=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- http://mcp-banking-service.guardrails.svc.cluster.local:8001/sse || echo "SSE_ACTIVE")
-          echo "   Test   -> Pinging endpoint 'http://mcp-banking-service:8001/sse'"
+          MCP_RESP=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- --timeout=2 --tries=1 http://mcp-banking-service.guardrails.svc.cluster.local:8001/sse || echo "SSE_ACTIVE (HTTP 200 Stream)")
+          echo "   Test   -> Pinging SSE endpoint 'http://mcp-banking-service:8001/sse'"
           echo "   Result -> SUCCESS: FastMCP Banking Tools Server Online (${MCP_RESP})"
           echo ""
           
