@@ -18,7 +18,7 @@ PAYLOAD = json.dumps({
 })
 
 PYTHON_SCRIPT = (
-    "import urllib.request, json\n"
+    "import urllib.request, json, sys\n"
     "payload = " + repr(PAYLOAD.encode()) + "\n"
     "req = urllib.request.Request(\n"
     "    '" + NEMO_URL + "',\n"
@@ -26,10 +26,16 @@ PYTHON_SCRIPT = (
     "    headers={'Content-Type': 'application/json'},\n"
     "    method='POST'\n"
     ")\n"
-    "with urllib.request.urlopen(req, timeout=30) as r:\n"
-    "    body = json.loads(r.read().decode())\n"
-    "    content = body.get('choices', [{}])[0].get('message', {}).get('content', '')\n"
-    "    print('INFERENCE_OK: ' + content[:120])\n"
+    "try:\n"
+    "    with urllib.request.urlopen(req, timeout=90) as r:\n"
+    "        body = json.loads(r.read().decode())\n"
+    "        content = body.get('choices', [{}])[0].get('message', {}).get('content', '')\n"
+    "        print('INFERENCE_OK: ' + content[:120])\n"
+    "except Exception as e:\n"
+    "    import traceback\n"
+    "    print('INFERENCE_ERR: ' + str(e))\n"
+    "    traceback.print_exc(file=sys.stderr)\n"
+    "    sys.exit(1)\n"
 )
 
 def main():
@@ -44,7 +50,7 @@ def main():
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         output = result.stdout.strip()
         stderr = result.stderr.strip()
 
