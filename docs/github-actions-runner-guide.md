@@ -1,7 +1,7 @@
 # 🤖 GitHub Actions Self-Hosted Runner & CI/CD Operations Guide
 ## Repository: `guardrails-edge-infra`
 
-This guide explains how the GitHub Actions self-hosted runner operates on the `saasdeploy` ARM64 node, how to manage systemd services, and how secrets are injected without hardcoding.
+This guide explains how the GitHub Actions self-hosted runner operates on the `saasdeploy` ARM64 node, how to manage systemd services, and how automated post-deployment integration tests run.
 
 ---
 
@@ -15,7 +15,17 @@ This guide explains how the GitHub Actions self-hosted runner operates on the `s
 
 ---
 
-## 🛠️ 2. Service Management Commands (SSH Terminal)
+## 🧪 2. Automated Post-Deployment Integration Tests
+
+Every CI/CD execution automatically runs a post-deploy verification step before marking the pipeline as green:
+
+1. 🐘 **PostgreSQL DB Integrity Test**: Executes `SELECT count(*) FROM characters;` inside the cluster.
+2. 🔬 **Granite Guardian 2B Health Check**: Sends an internal HTTP ping to `http://granite-guardian-service.guardrails.svc.cluster.local:11434/api/tags`.
+3. 🛡️ **NeMo Guardrails Server Health Check**: Sends an internal HTTP ping to `http://nemo-guardrails-service.guardrails.svc.cluster.local:8000/v1/health`.
+
+---
+
+## 🛠️ 3. Service Management Commands (SSH Terminal)
 
 If you ever need to check, restart, or troubleshoot the GitHub Actions daemon on your VM:
 
@@ -37,25 +47,18 @@ sudo ./svc.sh uninstall
 
 ---
 
-## 🔑 3. Managing GitHub Secrets for Deployment
+## 🔑 4. Managing GitHub Secrets for Deployment
 
 No database passwords or API keys are committed to Git. The workflow `.github/workflows/deploy.yml` expects secrets to be set in your GitHub Repository:
 
 ### How to set Secrets in GitHub:
 1. Go to your GitHub repository: `https://github.com/<YOUR_USER>/guardrails-edge-infra`
 2. Navigate to **Settings** ➔ **Secrets and variables** ➔ **Actions**.
-3. Click **New repository secret** and add:
-
-| Secret Name | Example Value | Description |
-|---|---|---|
-| `POSTGRES_DB` | `guardrails_db` | PostgreSQL Database Name |
-| `POSTGRES_USER` | `guardrails_user` | PostgreSQL Database User |
-| `POSTGRES_PASSWORD` | `SecurePass2026!` | PostgreSQL Database Password |
-| `OPENAI_API_KEY` | `sk-proj-...` | OpenAI API Key for NeMo Guardrails |
+3. Click **New repository secret** and add `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD`.
 
 ---
 
-## 🔍 4. Troubleshooting & Inspection Commands
+## 🔍 5. Troubleshooting & Inspection Commands
 
 If a GitHub Actions deployment fails or hangs:
 
