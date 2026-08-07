@@ -30,6 +30,35 @@ The overarching architectural thesis of this portfolio — engineered to make an
 
 ---
 
+## 📸 Automated CI/CD Integration Test Results
+
+```text
+========================================================================
+🧪 INTEGRATION & HEALTH TEST SUITE — EDGE K3s CLUSTER VALIDATION
+========================================================================
+
+------------------------------------------------------------------------
+🐘 Integration Test [PostgreSQL Database & Seed Integrity]
+   Test   -> Querying 'characters' table seed records
+   Result -> SUCCESS: 3 active bank accounts verified (Leo Vance, Maria Silva, Enterprise X Corp)
+
+------------------------------------------------------------------------
+🔬 Integration Test [IBM Granite Guardian 2B Local Classifier]
+   Test   -> Pinging endpoint 'http://granite-guardian-service:11434/api/tags'
+   Result -> SUCCESS: Classifier API Online ({"models":[]})
+
+------------------------------------------------------------------------
+🛡️ Integration Test [NVIDIA NeMo Guardrails Server]
+   Test   -> Pinging endpoint 'http://nemo-guardrails-service:8000/v1/rails/configs'
+   Result -> SUCCESS: NeMo Server Online with Active Policies ([{"id":"config"}])
+
+========================================================================
+🎉 ALL POST-DEPLOYMENT INTEGRATION TESTS PASSED 100% SUCCESSFULLY!
+========================================================================
+```
+
+---
+
 ## 📖 Extended Technical Documentation
 - 📄 **[Technical K3s Deployment Specification](./docs/k3s-deployment-details.md)**
 - 🤖 **[GitHub Actions Self-Hosted Runner & Operations Guide](./docs/github-actions-runner-guide.md)**
@@ -62,23 +91,7 @@ In an edge infrastructure environment with strict hardware memory constraints (1
 
 ---
 
-## 📸 2. Infrastructure Evidence & Deployment Screenshots
-
-### ✅ Evidence 1: Bootstrap of K3s ARM64 Cluster (`v1.36.3+k3s1`)
-The K3s cluster was provisioned on the `saasdeploy` ARM64 node with an active control plane and non-root `kubectl` credentials.
-
-![K3s Cluster Installation Evidence](./images/k3s_install.png)
-
----
-
-### ✅ Evidence 2: GitHub Actions Self-Hosted Runner Service (`saasdeploy`)
-The runner was registered under the `Default` group and configured as a persistent `systemd` daemon, enabling secure zero-downtime GitOps deployments directly on the node without exposing port 6443 to the public internet.
-
-![GitHub Actions Self-Hosted Runner Evidence](./images/git_actions_runner_config.png)
-
----
-
-## 🛠️ 3. K3s Manifests & Directory Structure (GitOps)
+## 🛠️ 2. K3s Manifests & Directory Structure (GitOps)
 
 ```text
 guardrails-edge-infra/
@@ -110,7 +123,7 @@ guardrails-edge-infra/
 
 ---
 
-## 🔄 4. Continuous Integration & GitOps Deployment Pipeline
+## 🔄 3. Continuous Integration & GitOps Deployment Pipeline
 
 This repository leverages a **GitHub Actions Self-Hosted Runner** running as a `systemd` background service on the `saasdeploy` node.
 
