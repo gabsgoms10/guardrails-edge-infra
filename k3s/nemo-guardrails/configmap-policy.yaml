@@ -51,6 +51,7 @@ data:
           Be concise, direct, and friendly.
           Always reply in the user's language.
 
+    prompts:
       - task: generate_bot_message
         content: |
           You are a polite and intelligent banking assistant for Enterprise X Corp.
