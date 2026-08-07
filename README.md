@@ -30,6 +30,14 @@ The overarching architectural thesis of this portfolio — engineered to make an
 
 ---
 
+## 📖 Extended Technical Documentation & Flow Specifications
+- 📄 **[Technical K3s Deployment Specification](./docs/k3s-deployment-details.md)**
+- ☸️ **[K3s Microservices Integration & Dependency Flow](./docs/k3s-mcp-integration-flow.md)**
+- 🤖 **[GitHub Actions Self-Hosted Runner & Operations Guide](./docs/github-actions-runner-guide.md)**
+- 🐘 **[PostgreSQL Database & Schema Operations Guide](./docs/database-operations-guide.md)**
+
+---
+
 ## 📸 1. Infrastructure Evidence & Deployment Screenshots
 
 ### ✅ Evidence 1: Bootstrap of K3s ARM64 Cluster (`v1.36.3+k3s1`)
@@ -47,7 +55,7 @@ The runner was registered under the `Default` group and configured as a persiste
 ---
 
 ### ✅ Evidence 3: Automated Post-Deployment Integration Test Suite
-Every GitOps deployment executes an automated multi-stage integration test suite validating PostgreSQL connectivity/seeds, Granite Guardian 2B classifier endpoints, and NVIDIA NeMo Guardrails Server policy status.
+Every GitOps deployment executes an automated multi-stage integration test suite validating PostgreSQL connectivity/seeds, Granite Guardian 2B classifier endpoints, FastMCP SSE tools, and NVIDIA NeMo Guardrails Server policy status.
 
 ![GitHub Actions Automated Integration Tests Result](./images/github_actions_test_results.png)
 
@@ -60,6 +68,11 @@ Every GitOps deployment executes an automated multi-stage integration test suite
 🐘 Integration Test [PostgreSQL Database & Seed Integrity]
    Test   -> Querying 'characters' table seed records
    Result -> SUCCESS: 3 active bank accounts verified (Leo Vance, Maria Silva, Enterprise X Corp)
+
+------------------------------------------------------------------------
+🔌 Integration Test [FastMCP Banking Tools SSE Server]
+   Test   -> Pinging endpoint 'http://mcp-banking-service:8001/sse'
+   Result -> SUCCESS: FastMCP Banking Tools Server Online (SSE_ACTIVE)
 
 ------------------------------------------------------------------------
 🔬 Integration Test [IBM Granite Guardian 2B Local Classifier]
@@ -75,13 +88,6 @@ Every GitOps deployment executes an automated multi-stage integration test suite
 🎉 ALL POST-DEPLOYMENT INTEGRATION TESTS PASSED 100% SUCCESSFULLY!
 ========================================================================
 ```
-
----
-
-## 📖 Extended Technical Documentation
-- 📄 **[Technical K3s Deployment Specification](./docs/k3s-deployment-details.md)**
-- 🤖 **[GitHub Actions Self-Hosted Runner & Operations Guide](./docs/github-actions-runner-guide.md)**
-- 🐘 **[PostgreSQL Database & Schema Operations Guide](./docs/database-operations-guide.md)**
 
 ---
 
@@ -119,12 +125,15 @@ guardrails-edge-infra/
 │       └── deploy.yml               # GitOps pipeline executing on self-hosted runner
 ├── docs/
 │   ├── k3s-deployment-details.md    # In-depth technical specification
+│   ├── k3s-mcp-integration-flow.md  # K3s microservices dependency & flow doc
 │   ├── github-actions-runner-guide.md # CI/CD & runner management guide
 │   └── database-operations-guide.md # PostgreSQL queries & maintenance guide
 ├── k3s/
 │   ├── namespace.yaml               # 'guardrails' namespace
 │   ├── guardian/
 │   │   └── deployment.yaml          # IBM Granite Guardian 2B Local Classifier (Ollama)
+│   ├── mcp/
+│   │   └── deployment.yaml          # FastMCP Python Server (GHCR Image + initContainers)
 │   ├── postgres/
 │   │   ├── deployment.yaml          # PostgreSQL tuned for low RAM (~350MB)
 │   │   ├── service.yaml

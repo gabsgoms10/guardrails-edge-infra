@@ -28,7 +28,21 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8001
+        readinessProbe:
+          tcpSocket:
+            port: 8001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 8001
+          initialDelaySeconds: 10
+          periodSeconds: 10
         env:
+        - name: SERVER_HOST
+          value: "0.0.0.0"
+        - name: SERVER_PORT
+          value: "8001"
         - name: POSTGRES_HOST
           value: "postgres-service.guardrails.svc.cluster.local"
         - name: POSTGRES_PORT

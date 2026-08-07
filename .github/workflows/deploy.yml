@@ -21,6 +21,16 @@ jobs:
         run: |
           kubectl create namespace guardrails --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: Enforce Mandatory GitHub Secrets Check
+        run: |
+          echo "🔒 Verifying mandatory repository secrets..."
+          if [ -z "${{ secrets.POSTGRES_PASSWORD }}" ]; then
+            echo "❌ [STRICT SECURITY ERROR] POSTGRES_PASSWORD secret is missing in GitHub Repository Settings!"
+            echo "Please navigate to Settings -> Secrets and variables -> Actions and register POSTGRES_PASSWORD."
+            exit 1
+          fi
+          echo "✅ All required repository secrets verified."
+
       - name: Inject PostgreSQL Secrets from GitHub Secrets Pipeline (Strict Security - Zero Fallbacks)
         run: |
           kubectl create secret generic postgres-secrets \
