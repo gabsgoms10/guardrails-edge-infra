@@ -136,7 +136,7 @@ jobs:
           echo "   Result -> ${NEMO_RAW}"
           echo ""
           echo "=== NeMo Pod Logs (last 50 lines) ==="
-          kubectl logs deployment/nemo-guardrails-server -n guardrails --tail=50
+          kubectl logs -l app=nemo-guardrails -n guardrails --tail=50
           echo "=== End NeMo Logs ==="
           echo ""
 

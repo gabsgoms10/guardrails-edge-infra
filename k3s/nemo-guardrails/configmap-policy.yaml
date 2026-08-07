@@ -39,15 +39,10 @@ data:
       input:
         flows:
           - self check input
-          - check input topic
-      execution:
-        flows:
-          - check fraud registry
-          - validate bacen limits
+          - handle off topic
       output:
         flows:
           - self check output
-          - mask sensitive pii
 
     prompts:
       - task: self_check_input
