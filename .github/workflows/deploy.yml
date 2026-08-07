@@ -148,8 +148,8 @@ jobs:
               --max-time 120 \
               http://127.0.0.1:18000/v1/chat/completions || echo "{}")
             
-            if echo "$NEMO_SAFE" | grep -qi "RESOURCE_EXHAUSTED"; then
-              echo "⚠️ Rate limit 429 detected from Google API (15s limit). Waiting 16s before retry (Attempt $attempt/3)..."
+            if echo "$NEMO_SAFE" | grep -qi "RESOURCE_EXHAUSTED\|Internal server error"; then
+              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 16s before retry (Attempt $attempt/3)..."
               sleep 16
             else
               break
@@ -157,7 +157,7 @@ jobs:
           done
           
           NEMO_REPLY=$(echo "$NEMO_SAFE" | jq -r '.choices[0].message.content // empty')
-          if [ -n "$NEMO_REPLY" ] && ! echo "$NEMO_SAFE" | grep -q "error"; then
+          if [ -n "$NEMO_REPLY" ] && ! echo "$NEMO_SAFE" | grep -qi "error"; then
             echo "✅ SUCCESS: Granite verified prompt as SAFE. Routed to Google Gemini."
             echo "🤖 Gemini Response: \"$NEMO_REPLY\""
           else
@@ -184,8 +184,8 @@ jobs:
               --max-time 120 \
               http://127.0.0.1:18000/v1/chat/completions || echo "{}")
             
-            if echo "$NEMO_INJECT" | grep -qi "RESOURCE_EXHAUSTED"; then
-              echo "⚠️ Rate limit 429 detected from Google API (15s limit). Waiting 16s before retry (Attempt $attempt/3)..."
+            if echo "$NEMO_INJECT" | grep -qi "RESOURCE_EXHAUSTED\|Internal server error"; then
+              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 16s before retry (Attempt $attempt/3)..."
               sleep 16
             else
               break
@@ -220,8 +220,8 @@ jobs:
               --max-time 120 \
               http://127.0.0.1:18000/v1/chat/completions || echo "{}")
             
-            if echo "$NEMO_PIX" | grep -qi "RESOURCE_EXHAUSTED"; then
-              echo "⚠️ Rate limit 429 detected from Google API (15s limit). Waiting 16s before retry (Attempt $attempt/3)..."
+            if echo "$NEMO_PIX" | grep -qi "RESOURCE_EXHAUSTED\|Internal server error"; then
+              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 16s before retry (Attempt $attempt/3)..."
               sleep 16
             else
               break
