@@ -10,7 +10,6 @@ data:
       # 1. Main Reasoning Engine (Qwen 2.5 3B via Ollama OpenAI-compatible API)
       - type: main
         engine: openai
-        model: qwen2.5:3b
         parameters:
           model_name: "qwen2.5:3b"
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
@@ -19,7 +18,6 @@ data:
       # Explicit model mapping for OpenAI API requests specifying model: qwen2.5:3b
       - type: qwen2.5:3b
         engine: openai
-        model: qwen2.5:3b
         parameters:
           model_name: "qwen2.5:3b"
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
@@ -28,7 +26,6 @@ data:
       # 2. Resilient Fallback Engine
       - type: main_fallback
         engine: openai
-        model: qwen2.5-coder:3b
         parameters:
           model_name: "qwen2.5-coder:3b"
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
@@ -37,7 +34,6 @@ data:
       # 3. Local Risk Classifier Engine (IBM Granite Guardian 2B via Ollama OpenAI-compatible API)
       - type: self_check_input
         engine: openai
-        model: granite3-guardian:2b
         parameters:
           model_name: "granite3-guardian:2b"
           openai_api_base: "http://granite-guardian-service.guardrails.svc.cluster.local:11434/v1"
@@ -45,7 +41,6 @@ data:
 
       - type: self_check_output
         engine: openai
-        model: granite3-guardian:2b
         parameters:
           model_name: "granite3-guardian:2b"
           openai_api_base: "http://granite-guardian-service.guardrails.svc.cluster.local:11434/v1"
