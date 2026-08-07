@@ -40,7 +40,6 @@ data:
       input:
         flows:
           - self check input
-          - handle off topic
       output:
         flows:
           - self check output
