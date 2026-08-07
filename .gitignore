@@ -5,8 +5,9 @@
 *.key
 secrets/
 secret-*.yaml
+!secret-*.template.yaml
 
-# Local Actions Runner (if placed inside workspace)
+# Local Actions Runner
 actions-runner/
 _work/
 

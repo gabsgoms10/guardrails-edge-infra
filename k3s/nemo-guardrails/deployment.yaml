@@ -20,8 +20,12 @@ spec:
     spec:
       containers:
       - name: nemo-server
-        image: nemoguardrails/nemoguardrails:latest
-        command: ["nemoguardrails", "server", "--config", "/app/config"]
+        image: python:3.11-slim
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            pip install --no-cache-dir nemoguardrails uvicorn fastapi && \
+            nemoguardrails server --config /app/config --port 8000 --host 0.0.0.0
         ports:
         - containerPort: 8000
         resources:
@@ -35,7 +39,7 @@ spec:
           httpGet:
             path: /v1/health
             port: 8000
-          initialDelaySeconds: 10
+          initialDelaySeconds: 25
           periodSeconds: 5
         volumeMounts:
         - name: policy-volume

@@ -16,6 +16,18 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Ensure Kubernetes Namespace Exists
+        run: |
+          kubectl create namespace guardrails --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Inject PostgreSQL Secrets from GitHub Secrets Pipeline (Strict Security - No Fallbacks)
+        run: |
+          kubectl create secret generic postgres-secrets \
+            --from-literal=POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
+            --from-literal=POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+            -n guardrails --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Validate Kubernetes Manifests via Kustomize
         run: |
           kubectl kustomize k3s/
@@ -26,8 +38,9 @@ jobs:
 
       - name: Verify Deployment Rollout Status
         run: |
-          kubectl rollout status deployment/postgres -n guardrails --timeout=60s
-          kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=120s
+          kubectl rollout status deployment/postgres -n guardrails --timeout=300s
+          kubectl rollout status deployment/granite-guardian -n guardrails --timeout=300s
+          kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=300s
 
       - name: Display Pod Status
         run: |

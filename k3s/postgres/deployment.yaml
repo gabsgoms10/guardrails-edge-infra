@@ -18,11 +18,20 @@ spec:
         image: postgres:16-alpine
         env:
         - name: POSTGRES_DB
-          value: guardrails_db
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_DB
         - name: POSTGRES_USER
-          value: guardrails_user
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_USER
         - name: POSTGRES_PASSWORD
-          value: guardrails_pass_123
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_PASSWORD
         ports:
         - containerPort: 5432
         resources:
