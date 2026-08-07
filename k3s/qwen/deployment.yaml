@@ -43,10 +43,12 @@ spec:
             memory: 1500Mi
             cpu: 500m
         readinessProbe:
-          httpGet:
-            path: /api/tags
-            port: 11434
-          initialDelaySeconds: 15
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "wget -qO- http://localhost:11434/api/tags | grep -q 'qwen2.5:3b'"
+          initialDelaySeconds: 5
           periodSeconds: 5
         volumeMounts:
         - name: ollama-storage
