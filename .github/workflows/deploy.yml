@@ -97,6 +97,26 @@ jobs:
 
       - name: 🐘 Infra Test 1/11 — PostgreSQL Database & Agentic RAG Seed Integrity
         run: |
+          echo "🔄 Running idempotent schema migrations for pgvector & bacen_regulations..."
+          kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "
+            CREATE EXTENSION IF NOT EXISTS vector;
+            CREATE TABLE IF NOT EXISTS bacen_regulations (
+              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+              resolution_code TEXT NOT NULL,
+              title TEXT NOT NULL,
+              category TEXT NOT NULL,
+              content TEXT NOT NULL,
+              keywords TEXT[],
+              created_at TIMESTAMPTZ DEFAULT NOW()
+            );
+            INSERT INTO bacen_regulations (resolution_code, title, category, content, keywords)
+            VALUES
+              ('BCB-142', 'Limites de Transação Noturna PIX', 'pix_limits', 'De acordo com a Resolução BCB nº 142, estabelece-se o limite padrão de R$ 1.000,00 (100.000 centavos) para transações PIX realizadas por pessoas físicas no horário noturno compreendido entre 20:00 e 06:00. Clientes podem solicitar alteração do limite com prazo de aprovação de 24h a 48h.', ARRAY['noturno', 'limite', 'pix', '20h', '1000']),
+              ('BCB-103', 'Mecanismo Especial de Devolução (MED)', 'fraud_med', 'A Resolução BCB nº 103 disciplina o Mecanismo Especial de Devolução (MED). Em casos de fundada suspeita de fraude, golpe ou engenharia social, a instituição financeira receptora deve efetuar o bloqueio cautelar imediato dos valores na conta do destinatário por até 72 horas para análise de estorno.', ARRAY['med', 'devolucao', 'fraude', 'bloqueio', 'estorno']),
+              ('BCB-001', 'Diretrizes de Autenticação e Chaves PIX', 'dict_policy', 'A Resolução BCB nº 1 define as regras de chave PIX e autenticação no DICT. Todas as transferências exigem validação prévia de chave ativa (CPF, CNPJ, e-mail, telefone ou chave aleatória). É proibida a conclusão de transferências para chaves sinalizadas como bloqueadas por ordem judicial ou administrativa.', ARRAY['chave', 'dict', 'autenticacao', 'cpf', 'cnpj'])
+            ON CONFLICT DO NOTHING;
+          " || true
+
           DB_COUNT=$(kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -t -c "SELECT count(*) FROM characters;" | xargs)
           RAG_COUNT=$(kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -t -c "SELECT count(*) FROM bacen_regulations;" | xargs)
           
