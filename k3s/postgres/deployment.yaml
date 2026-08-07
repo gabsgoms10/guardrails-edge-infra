@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: guardrails
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16-alpine
+        env:
+        - name: POSTGRES_DB
+          value: guardrails_db
+        - name: POSTGRES_USER
+          value: guardrails_user
+        - name: POSTGRES_PASSWORD
+          value: guardrails_pass_123
+        ports:
+        - containerPort: 5432
+        resources:
+          limits:
+            memory: 350Mi
+            cpu: 300m
+          requests:
+            memory: 150Mi
+            cpu: 100m
+        volumeMounts:
+        - name: seed-volume
+          mountPath: /docker-entrypoint-initdb.d/
+      volumes:
+      - name: seed-volume
+        configMap:
+          name: postgres-seed
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: guardrails
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432

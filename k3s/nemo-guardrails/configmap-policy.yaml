@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nemo-policy-config
+  namespace: guardrails
+data:
+  config.yml: |
+    models:
+      - type: main
+        engine: openai
+        model: gpt-4o-mini
+
+    rails:
+      input:
+        flows:
+          - check input topic
+      execution:
+        flows:
+          - check fraud registry
+          - validate bacen limits
+      output:
+        flows:
+          - mask sensitive pii
+
+  rails.co: |
+    # DSL Colang v2 — Regras da Política Bancária
+
+    define user ask off topic
+      "como fazer uma receita de bolo?"
+      "escreva um código em C++"
+      "quem ganhou o futebol?"
+
+    define bot refuse off topic
+      "Desculpe, sou um assistente estritamente bancário e não posso responder sobre tópicos fora do escopo financeiro."
+
+    define flow handle off topic
+      user ask off topic
+      bot refuse off topic
+
+    define flow audit tool execution
+      user request pix transfer
+      $is_blacklisted = execute check_fraud_registry(key=$pix_key)
+      if $is_blacklisted
+        bot refuse unauthorized transfer
+        stop

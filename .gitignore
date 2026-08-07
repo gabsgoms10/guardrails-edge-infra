@@ -1,0 +1,21 @@
+# Environment variables & Secrets
+.env
+*.env
+*.pem
+*.key
+secrets/
+secret-*.yaml
+
+# Local Actions Runner (if placed inside workspace)
+actions-runner/
+_work/
+
+# Logs & Temp files
+*.log
+tmp/
+.DS_Store
+Thumbs.db
+
+# IDEs & Editors
+.vscode/
+.idea/

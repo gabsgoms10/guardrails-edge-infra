@@ -1,0 +1,32 @@
+name: GitOps K3s Deploy Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-to-k3s:
+    name: Apply K3s Manifests on Edge Node
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Validate Kubernetes Manifests via Kustomize
+        run: |
+          kubectl kustomize k3s/
+
+      - name: Apply Manifests to K3s Cluster
+        run: |
+          kubectl apply -k k3s/
+
+      - name: Verify Deployment Rollout Status
+        run: |
+          kubectl rollout status deployment/postgres -n guardrails --timeout=60s
+          kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=120s
+
+      - name: Display Pod Status
+        run: |
+          kubectl get pods -n guardrails
