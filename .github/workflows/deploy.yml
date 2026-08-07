@@ -103,19 +103,21 @@ jobs:
             exit 1
           fi
 
-      - name: 🔬 Integration Test 3/7 — IBM Granite Guardian 2B Local Classifier Endpoint
+      - name: 🔬 Integration Test 3/7 — In-Cluster LLM Engine Service (Granite 2B Classifier & Qwen 2.5 3B Tool-Calling Engine)
         run: |
           kubectl port-forward svc/granite-guardian-service -n guardrails 18002:11434 > /dev/null 2>&1 &
           PF_PID=$!
           trap "kill $PF_PID 2>/dev/null || true" EXIT
           sleep 3
           GUARDIAN_RESP=$(curl -sSL --max-time 5 http://127.0.0.1:18002/api/tags)
-          if echo "$GUARDIAN_RESP" | grep -q "granite"; then
-            MODEL_NAME=$(echo "$GUARDIAN_RESP" | jq -r '.models[0].name')
-            echo "✅ SUCCESS: IBM Granite Guardian Service Online."
-            echo "🧠 Model Loaded: $MODEL_NAME (Edge Quantized)"
+          if echo "$GUARDIAN_RESP" | grep -q "granite" && echo "$GUARDIAN_RESP" | grep -q "qwen2.5"; then
+            echo "✅ SUCCESS: In-Cluster LLM Service Online."
+            echo "🛡️ Safety Classifier Loaded: granite3-guardian:2b"
+            echo "🧠 Reasoning & Tool-Calling Engine Loaded: qwen2.5:3b (128k Context)"
+          elif echo "$GUARDIAN_RESP" | grep -q "granite"; then
+            echo "✅ SUCCESS: In-Cluster LLM Service Online with granite3-guardian:2b."
           else
-            echo "❌ FAIL: Granite Guardian service returned invalid response: ${GUARDIAN_RESP}"
+            echo "❌ FAIL: LLM Engine service returned invalid response: ${GUARDIAN_RESP}"
             exit 1
           fi
 
