@@ -95,14 +95,24 @@ jobs:
           kubectl exec deployment/qwen-engine -n guardrails -- ollama cp qwen2.5:3b main_fallback || true
           echo "✅ Model weights downloaded & aliases created successfully."
 
-      - name: 🐘 Infra Test 1/11 — PostgreSQL Database & Seed Integrity
+      - name: 🐘 Infra Test 1/11 — PostgreSQL Database & Agentic RAG Seed Integrity
         run: |
           DB_COUNT=$(kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -t -c "SELECT count(*) FROM characters;" | xargs)
+          RAG_COUNT=$(kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -t -c "SELECT count(*) FROM bacen_regulations;" | xargs)
+          
           if [ -z "$DB_COUNT" ] || [ "$DB_COUNT" -eq 0 ]; then
-            echo "❌ FAIL: PostgreSQL returned 0 records or failed to connect!"
+            echo "❌ FAIL: PostgreSQL characters table returned 0 records or failed to connect!"
             exit 1
           fi
-          echo "✅ SUCCESS: ${DB_COUNT} active bank accounts verified (Leo Vance, Maria Silva, Enterprise X Corp)"
+          
+          if [ -z "$RAG_COUNT" ] || [ "$RAG_COUNT" -eq 0 ]; then
+            echo "❌ FAIL: PostgreSQL Agentic RAG table 'bacen_regulations' returned 0 records!"
+            exit 1
+          fi
+          
+          echo "✅ SUCCESS: PostgreSQL Ledger & Agentic RAG DB Online."
+          echo "   - ${DB_COUNT} active bank accounts verified (Leo Vance, Maria Silva, Enterprise X Corp)"
+          echo "   - ${RAG_COUNT} BACEN Regulatory RAG Policies verified (BCB-142 Night Limits, BCB-103 MED Fraud, BCB-001 DICT)"
 
       - name: 🔌 Infra Test 2/11 — FastMCP Banking Tools SSE Server
         run: |
