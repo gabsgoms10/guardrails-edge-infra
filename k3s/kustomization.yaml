@@ -9,5 +9,6 @@ resources:
   - postgres/deployment.yaml
   - mcp/deployment.yaml
   - guardian/deployment.yaml
+  - qwen/deployment.yaml
   - nemo-guardrails/configmap-policy.yaml
   - nemo-guardrails/deployment.yaml

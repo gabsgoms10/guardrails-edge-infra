@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: granite-guardian
+  name: qwen-engine
   namespace: guardrails
 spec:
   replicas: 1
@@ -12,14 +12,14 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: granite-guardian
+      app: qwen-engine
   template:
     metadata:
       labels:
-        app: granite-guardian
+        app: qwen-engine
     spec:
       containers:
-      - name: guardian-classifier
+      - name: qwen-reasoning-engine
         image: ollama/ollama:latest
         command: ["/bin/sh", "-c"]
         args:
@@ -27,8 +27,8 @@ spec:
             ollama serve &
             echo "Waiting for Ollama daemon to initialize..."
             until wget -qO- http://localhost:11434/api/tags > /dev/null 2>&1; do sleep 1; done
-            echo "Pulling IBM Granite Guardian 2B model weights..."
-            ollama pull granite3-guardian:2b || true
+            echo "Pulling Qwen 2.5 3B reasoning & tool-calling model weights..."
+            ollama pull qwen2.5:3b || true
             wait
         env:
         - name: OLLAMA_MODELS
@@ -37,10 +37,10 @@ spec:
         - containerPort: 11434
         resources:
           limits:
-            memory: 3200Mi
+            memory: 3500Mi
             cpu: 2000m
           requests:
-            memory: 1200Mi
+            memory: 1500Mi
             cpu: 500m
         readinessProbe:
           httpGet:
@@ -58,12 +58,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: granite-guardian-service
+  name: qwen-engine-service
   namespace: guardrails
 spec:
   type: ClusterIP
   selector:
-    app: granite-guardian
+    app: qwen-engine
   ports:
   - port: 11434
     targetPort: 11434

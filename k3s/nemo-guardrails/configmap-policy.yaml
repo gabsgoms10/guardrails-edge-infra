@@ -7,19 +7,19 @@ data:
   config.yml: |
     colang_version: "1.0"
     models:
-      # 1. Main Reasoning Engine (Qwen 2.5 3B - 128k Context, Native Tool Calling, Q8_0 High Precision)
+      # 1. Main Reasoning Engine (Qwen 2.5 3B via Dedicated qwen-engine-service)
       - type: main
         engine: ollama
         model: qwen2.5:3b
         parameters:
-          base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
+          base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
 
       # 2. Resilient Fallback Engine
       - type: main_fallback
         engine: ollama
         model: qwen2.5-coder:3b
         parameters:
-          base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
+          base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
 
       # 2. Local Risk Classifier Engine (IBM Granite Guardian 2B via Ollama K3s Cluster Service)
       - type: self_check_input
