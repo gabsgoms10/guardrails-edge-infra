@@ -99,3 +99,7 @@ data:
       if $is_blacklisted
         bot refuse unauthorized transfer
         stop
+
+    define flow generate bot response
+      user message
+      bot respond
