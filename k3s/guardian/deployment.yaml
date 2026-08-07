@@ -23,7 +23,7 @@ spec:
           - |
             ollama serve &
             echo "Waiting for Ollama daemon to initialize..."
-            until wget -qO- http://localhost:11434/api/tags > /dev/null 2>&1; do sleep 1; done
+            until ollama list > /dev/null 2>&1; do sleep 1; done
             echo "Pulling IBM Granite Guardian 2B model weights..."
             ollama pull granite3-guardian:2b || true
             wait
@@ -44,7 +44,7 @@ spec:
             command:
             - /bin/sh
             - -c
-            - "wget -qO- http://localhost:11434/api/tags | grep -q 'granite3-guardian:2b'"
+            - "ollama list | grep -q 'granite3-guardian:2b'"
           initialDelaySeconds: 5
           periodSeconds: 5
         volumeMounts:

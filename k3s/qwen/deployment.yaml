@@ -23,7 +23,7 @@ spec:
           - |
             ollama serve &
             echo "Waiting for Ollama daemon to initialize..."
-            until wget -qO- http://localhost:11434/api/tags > /dev/null 2>&1; do sleep 1; done
+            until ollama list > /dev/null 2>&1; do sleep 1; done
             echo "Pulling Qwen 2.5 3B reasoning & tool-calling model weights..."
             ollama pull qwen2.5:3b || true
             wait
@@ -44,7 +44,7 @@ spec:
             command:
             - /bin/sh
             - -c
-            - "wget -qO- http://localhost:11434/api/tags | grep -q 'qwen2.5:3b'"
+            - "ollama list | grep -q 'qwen2.5:3b'"
           initialDelaySeconds: 5
           periodSeconds: 5
         volumeMounts:
