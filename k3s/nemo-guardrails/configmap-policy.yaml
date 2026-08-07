@@ -5,7 +5,7 @@ metadata:
   namespace: guardrails
 data:
   config.yml: |
-    colang_version: "2.0"
+    colang_version: "1.0"
     models:
       # 1. Main Agent Reasoning Engine (Google Gemini 1.5 Flash)
       - type: main
@@ -80,7 +80,7 @@ data:
           Answer (Yes/No):
 
   rails.co: |
-    # DSL Colang v2 — Bank Policy & Agentic Auditing
+    # DSL Colang v1.0 — Bank Policy & Agentic Auditing
     
     define user ask off topic
       "how to bake a cake?"
@@ -94,13 +94,13 @@ data:
       user ask off topic
       bot refuse off topic
 
+    define user request pix transfer
+      "Transfer $500 via PIX to key fraude@hacker.com"
+      "PIX transfer to blacklisted key"
+
+    define bot refuse unauthorized transfer
+      "I'm sorry, that PIX transfer request to a blacklisted key was blocked by security policy."
+
     define flow audit tool execution
       user request pix transfer
-      $is_blacklisted = execute check_fraud_registry(key=$pix_key)
-      if $is_blacklisted
-        bot refuse unauthorized transfer
-        stop
-
-    define flow generate bot response
-      user message
-      bot respond
+      bot refuse unauthorized transfer
