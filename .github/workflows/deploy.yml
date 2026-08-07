@@ -49,9 +49,10 @@ jobs:
         run: |
           kubectl kustomize k3s/
 
-      - name: Apply Manifests to K3s Cluster
+      - name: Apply Manifests to K3s Cluster & Force Pod Reload
         run: |
           kubectl apply -k k3s/
+          kubectl rollout restart deployment/nemo-guardrails-server -n guardrails
 
       - name: Display Real-Time Cluster Pod Status & Events
         run: |
@@ -133,6 +134,10 @@ jobs:
           kill $PF_PID 2>/dev/null || true
           echo "   Test   -> POST /v1/chat/completions {model, messages, guardrails.config_id=config}"
           echo "   Result -> ${NEMO_RAW}"
+          echo ""
+          echo "=== NeMo Pod Logs (last 50 lines) ==="
+          kubectl logs deployment/nemo-guardrails-server -n guardrails --tail=50
+          echo "=== End NeMo Logs ==="
           echo ""
 
           echo "========================================================================"
