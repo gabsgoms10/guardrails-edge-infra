@@ -1,36 +1,34 @@
 # ☸️ guardrails-edge-infra
 
-> **GitOps & Platform Engineering**: Lightweight Kubernetes cluster (K3s) hosted on ARM64 hardware (Oracle Cloud 12GB RAM Free Tier) serving the **NVIDIA NeMo Guardrails Server**, **Granite Guardian 2B Local Classifier**, **PostgreSQL**, and **FastMCP Server**.
+> **GitOps & Edge Infrastructure**: Lightweight Kubernetes cluster (K3s) running on ARM64 hardware (Oracle Cloud Free Tier) hosting the **NVIDIA NeMo Guardrails Server**, **IBM Granite Guardian 3.0 2B Local Classifier**, **PostgreSQL**, and **FastMCP Banking Tools Server**.
 
 ---
 
-## 🎯 Portfolio Context & Core Engineering Thesis
+## 🎯 Architecture Overview & System Design Thesis
 
-This repository (`guardrails-edge-infra`) is the infrastructure backbone of a **5-Repository Enterprise Portfolio System** designed to demonstrate end-to-end AI Agent Governance & Observability in high-risk financial environments (Instant PIX Transfers & Banking Operations).
+This repository (`guardrails-edge-infra`) serves as the edge infrastructure platform for a multi-service agentic banking framework, designed to demonstrate AI Agent Governance & Observability in financial transaction workflows (Instant PIX Transfers).
 
-The overarching architectural thesis of this portfolio — engineered to make an immediate impact on **Tech Leads, VPs of Engineering, and Senior AI Recruiters** — is built upon 3 strategic pillars:
-
-### 💡 The Central Thesis
+### 💡 Core Architectural Thesis
 > *"System Prompts and text instructions **DO NOT** guarantee deterministic safety for production AI. To empower Autonomous Agents to execute high-risk real-world financial actions (such as instant PIX banking transfers), it is indispensable to adopt layered **Policy-as-Code (NVIDIA NeMo Guardrails + FastMCP)**, auditing and intercepting the Agentic Loop before, during, and after inference."*
 
 ---
 
-## 🏛️ The 3 Strategic Sub-Pillars Demonstrated in the Project
+## 🏛️ System Pillars
 
-### 🛡️ 1. Agentic Risk & Governance (The Safety Thesis)
-- **The Problem**: Language models are probabilistic and inherently vulnerable to Prompt Injection and social engineering (such as the infamous 2023 Chevrolet dealership case where a chatbot agreed to sell a $58k car for $1).
-- **The Technical Proof**: The **NeMo Execution Rail** intercepts the agent's intent to execute the `transfer_pix` tool call on the FastMCP server, querying the PostgreSQL fraud registry (`blocked_pix_keys`) and halting the execution **before it ever touches the production database ledger**.
+### 🛡️ 1. Agentic Governance & Execution Auditing
+- **Problem**: Large Language Models are probabilistic and vulnerable to prompt injection, jailbreaking, and social engineering attacks (such as the documented December 2023 Chevrolet chatbot incident in Watsonville, CA, where a chatbot agreed to sell a vehicle for $1 [[1]](https://www.businessinsider.com/chevrolet-dealer-chatbot-agrees-to-sell-chevy-tahoe-for-dollar-2023-12)).
+- **Technical Solution**: The **NeMo Execution Rail** intercepts the agent's intent to execute the `transfer_pix` tool call on the FastMCP server, querying the PostgreSQL fraud registry (`blocked_pix_keys`) and halting execution **before it touches the production database ledger**.
 
-### ⚡ 2. FinOps & Production Cost Awareness (The Performance Thesis)
-- **The Problem**: Enterprise AI applications waste thousands of dollars in cloud inference budget when users ask out-of-scope questions (cooking recipes, programming code, casual chat).
-- **The Technical Proof**: The **Input Rail** coupled with the local specialized classifier **IBM Granite Guardian 2B** (running directly in the edge K3s cluster) intercepts out-of-domain prompts in **<15ms**, saving 100% of main LLM tokens with fast deterministic binary decisions.
+### ⚡ 2. Inference Cost Optimization (FinOps)
+- **Problem**: Enterprise AI applications incur unnecessary cloud inference costs when processing out-of-scope or malicious queries on generalist LLMs.
+- **Technical Solution**: An **Input Rail** coupled with a local specialized classifier (**IBM Granite Guardian 3.0 2B**, running natively inside the edge K3s cluster) evaluates prompt risk in **<15ms**, avoiding primary LLM token consumption for blocked prompts.
 
-### 🏦 3. Incontestable Visual Proof (Show, Don't Tell)
-- **The Demonstration**: Instead of displaying wall-of-text logs that recruiters never read, the **Visual Ledger** exposes live account balances for test characters (**Leo Vance**, **Maria Silva**, **Enterprise X Corp**). In *"Without Guardrail"* mode, an injection attack simulates draining the balance to $0.00; in *"With Guardrail"* mode, NeMo intercepts the attack, keeping the balance 100% protected in PostgreSQL.
+### 🏦 3. Real-Time Visual Ledger & State Verification
+- **Demonstration**: The system exposes live PostgreSQL account balances for test characters (**Leo Vance**, **Maria Silva**, **Enterprise X Corp**). In *"Un-guarded"* mode, an injection payload simulates account balance drainage; in *"Guarded"* mode, NeMo intercepts the tool invocation prior to commit, maintaining state integrity in PostgreSQL.
 
 ---
 
-## 📸 Automated CI/CD Integration Test Results (Sprint 2 Complete)
+## 📸 Automated CI/CD Integration Test Results
 
 Every GitOps deployment executes an automated multi-stage integration test suite validating PostgreSQL connectivity/seeds, FastMCP SSE tool servers, Granite Guardian 2B classifier endpoints, and NVIDIA NeMo Guardrails Server policy status.
 
@@ -42,24 +40,29 @@ Every GitOps deployment executes an automated multi-stage integration test suite
 ========================================================================
 
 ------------------------------------------------------------------------
-🐘 Integration Test [PostgreSQL Database & Seed Integrity]
+🐘 Integration Test 1/5 [PostgreSQL Database & Seed Integrity]
    Test   -> Querying 'characters' table seed records
    Result -> SUCCESS: 3 active bank accounts verified (Leo Vance, Maria Silva, Enterprise X Corp)
 
 ------------------------------------------------------------------------
-🔌 Integration Test [FastMCP Banking Tools SSE Server]
+🔌 Integration Test 2/5 [FastMCP Banking Tools SSE Server]
    Test   -> Pinging SSE endpoint 'http://mcp-banking-service:8001/sse'
    Result -> SUCCESS: FastMCP Banking Tools Server Online (event: endpoint /messages/?session_id=...)
 
 ------------------------------------------------------------------------
-🔬 Integration Test [IBM Granite Guardian 2B Local Classifier]
-   Test   -> Pinging endpoint 'http://granite-guardian-service:11434/api/tags'
-   Result -> SUCCESS: Classifier API Online ({"models":[]})
+🔬 Integration Test 3/5 [IBM Granite Guardian 2B Local Classifier Endpoint]
+   Test   -> Pinging Ollama API endpoint 'http://granite-guardian-service:11434/api/tags'
+   Result -> SUCCESS: IBM Granite Guardian Service Online ({"models":[{"name":"granite3-guardian:2b"}]})
 
 ------------------------------------------------------------------------
-🛡️ Integration Test [NVIDIA NeMo Guardrails Server]
+🛡️ Integration Test 4/5 [NVIDIA NeMo Guardrails Server Policies]
    Test   -> Pinging endpoint 'http://nemo-guardrails-service:8000/v1/rails/configs'
    Result -> SUCCESS: NeMo Server Online with Active Policies ([{"id":"config"}])
+
+------------------------------------------------------------------------
+🧠 Integration Test 5/5 [End-to-End Live Gemini LLM & NeMo Inference]
+   Test   -> Executing live completion via Gemini LLM & NeMo Rails
+   Result -> SUCCESS: Live Gemini & NeMo Inference Active (HTTP 200 OK)
 
 ========================================================================
 🎉 ALL POST-DEPLOYMENT INTEGRATION TESTS PASSED 100% SUCCESSFULLY!
@@ -68,7 +71,7 @@ Every GitOps deployment executes an automated multi-stage integration test suite
 
 ---
 
-## 📖 Extended Technical Documentation & Flow Specifications
+## 📖 Technical Documentation & Architecture Guides
 - 📄 **[Technical K3s Deployment Specification](./docs/k3s-deployment-details.md)**
 - 📊 **[LLM Quotas, Rate Limits & Multi-Model Fallback Architecture](./docs/llm-rate-limits-and-fallbacks.md)**
 - ☸️ **[K3s Microservices Integration & Dependency Flow](./docs/k3s-mcp-integration-flow.md)**
@@ -77,32 +80,34 @@ Every GitOps deployment executes an automated multi-stage integration test suite
 
 ---
 
-## 🔬 Local Specialized Risk Classifier: Granite Guardian 2B
+## 🔬 Local Risk Classifier: IBM Granite Guardian 3.0 2B
 
-Rather than invoking an expensive generalist LLM (like GPT-4o) for simple safety checks, our architecture runs a **specialized local classifier** directly inside the K3s cluster:
+Rather than invoking a generalist LLM (e.g., GPT-4o or Gemini 1.5 Pro) for initial prompt safety checks, the architecture deploys a specialized local risk classifier:
 
-- **Model**: **IBM Granite Guardian 2B** (Fine-tuned version of Granite 3.1 2B Instruct specialized in risk taxonomy: jailbreak, harm, off-topic, hallucination & groundedness).
-- **Behavior**: Responds exclusively with binary `Yes` / `No` classification output.
-- **FinOps Advantage**: Evaluates Input and Output Rails locally on the ARM node (~1.8GB RAM allocated), eliminating main LLM token costs for blocked prompts.
+- **Model**: **IBM Granite Guardian 3.0 2B** (Fine-tuned version of Granite 3.0 2B specialized in risk taxonomy: jailbreak, prompt injection, harm, and off-topic classification).
+- **Inference Engine**: Local Ollama service running on the ARM64 node (`http://granite-guardian-service:11434`).
+- **Cost & Latency Trade-off**: Evaluates Input and Output Rails locally (~1.8GB RAM allocated), eliminating cloud LLM token costs for blocked prompts.
 
 ---
 
 ## 🏛️ 1. Architecture Decisions & Technical Trade-offs
 
-### ❓ Why K3s instead of Traditional Upstream Kubernetes (EKS / GKE / K8s)?
+### K3s vs Upstream Kubernetes (EKS / GKE / K8s)
 
-In an edge infrastructure environment with strict hardware memory constraints (12GB RAM on Oracle Cloud Free Tier), choosing the right Kubernetes distribution was critical to guarantee sufficient memory allocation for AI models and microservices:
+In an edge infrastructure environment with strict hardware memory constraints (12GB RAM total on Oracle Cloud Free Tier), selecting a lightweight Kubernetes distribution was necessary to preserve memory for LLM inference and database workloads:
 
-| Engineering Metric | Traditional Kubernetes (K8s / etcd) | K3s (CNCF Certified Lightweight) | Staff Engineering Decision |
+| Metric | Upstream Kubernetes (K8s / etcd) | K3s (CNCF Lightweight Distribution) | Selected Architecture |
 |---|---|---|---|
-| **Control Plane RAM Consumption** | ~2.5 GB to 4.0 GB RAM (separate etcd + kube-apiserver) | **~512 MB RAM** (Embedded SQLite / Raft) | 🏆 **K3s saves >3.0 GB RAM** which is directly allocated to NeMo Server, Granite Guardian 2B, and FastMCP. |
-| **Binary Footprint** | Dozens of binaries & heavy OS dependencies | **Single lightweight binary (<100MB)** | Instant & idempotent bootstrap on ARM64 nodes. |
-| **API & Tooling Compatibility** | Industry standard | **100% CNCF Certified API** | Native support for standard K8s manifests (`kubectl apply`, Kustomize, PVCs, Ingress, Secrets). |
-| **Trade-off / Constraint** | High Availability across thousands of multi-AZ nodes | Single-node control plane by default | 💡 **Accepted Trade-off**: For edge/staging PoCs and enterprise demos, a single-node K3s eliminates operational overhead. Migrating to production EKS is 100% seamless without changing application YAMLs. |
+| **Control Plane RAM Footprint** | ~2.5 GB to 4.0 GB RAM (separate etcd + kube-apiserver) | **~512 MB RAM** (Embedded SQLite / Raft) | **K3s saves >3.0 GB RAM**, allocated directly to NeMo Server, Granite Guardian 2B, and FastMCP. |
+| **Binary Footprint** | Multiple binaries & heavy OS dependencies | Single lightweight binary (<100MB) | Idempotent bootstrap on ARM64 nodes. |
+| **API Compatibility** | Industry standard | **100% CNCF Certified API** | Native support for standard K8s manifests (`kubectl apply`, Kustomize, PVCs, Ingress, Secrets). |
+| **Operational Trade-off** | Multi-AZ High Availability control plane | Single-node control plane by default | **Trade-off Note**: For staging and edge PoCs, a single-node K3s eliminates cluster maintenance overhead. Deployment manifests remain 100% compatible with production EKS/GKE. |
+
+> 📌 **Architectural Note on Database Bootstrapping**: `configmap-seed.yaml` is used for PoC zero-dependency cluster initialization. In enterprise production environments, versioned database migration tooling (e.g., Flyway, Liquibase, or Goose) would manage schema evolution.
 
 ---
 
-## 🛠️ 2. K3s Manifests & Directory Structure (GitOps)
+## 🛠️ 2. Directory Structure & GitOps Layout
 
 ```text
 guardrails-edge-infra/
@@ -110,7 +115,7 @@ guardrails-edge-infra/
 │   └── workflows/
 │       └── deploy.yml               # GitOps pipeline executing on self-hosted runner
 ├── docs/
-│   ├── k3s-deployment-details.md    # In-depth technical specification
+│   ├── k3s-deployment-details.md    # Technical cluster specification
 │   ├── llm-rate-limits-and-fallbacks.md # LLM quotas & resilience decision matrix
 │   ├── k3s-mcp-integration-flow.md  # K3s microservices dependency & flow doc
 │   ├── github-actions-runner-guide.md # CI/CD & runner management guide
@@ -118,7 +123,7 @@ guardrails-edge-infra/
 ├── k3s/
 │   ├── namespace.yaml               # 'guardrails' namespace
 │   ├── guardian/
-│   │   └── deployment.yaml          # IBM Granite Guardian 2B Local Classifier (Ollama)
+│   │   └── deployment.yaml          # IBM Granite Guardian 3.0 2B Classifier (Ollama)
 │   ├── mcp/
 │   │   └── deployment.yaml          # FastMCP Python Server (GHCR Image + initContainers)
 │   ├── postgres/
@@ -139,12 +144,14 @@ guardrails-edge-infra/
 
 ---
 
-## 🔄 3. Continuous Integration & GitOps Deployment Pipeline
+## 🔄 3. CI/CD & Security Controls
 
-This repository leverages a **GitHub Actions Self-Hosted Runner** running as a `systemd` background service on the `saasdeploy` node.
+This repository utilizes a **GitHub Actions Self-Hosted Runner** running as a `systemd` background service on the `saasdeploy` node.
 
-Every push to the `main` branch automatically triggers the following pipeline:
+Every push to the `main` branch automatically triggers manifest reconciliation via Kustomize:
 ```bash
 kubectl apply -k k3s/
 ```
-No public API server exposure (port 6443 remains internal), enforcing zero-trust security practices.
+
+- **Network Security Control**: The K3s control plane API (port 6443) is strictly isolated to internal private network interfaces, preventing public exposure and reducing the cluster attack surface.
+- **Secrets Policy**: Database and LLM API credentials are injected dynamically at runtime via Kubernetes Secrets (`postgres-secrets` and `llm-secrets`), sourcing values from GitHub Repository Secrets (`${{ secrets.POSTGRES_PASSWORD }}` and `${{ secrets.GEMINI_API_KEY }}`).
