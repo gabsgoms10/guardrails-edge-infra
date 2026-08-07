@@ -8,7 +8,7 @@ data:
     models:
       # 1. Main Agent Reasoning Engine (Google Gemini 1.5 Flash)
       - type: main
-        engine: gemini_flash
+        engine: google_genai
         model: gemini-1.5-flash
         parameters:
           temperature: 0.1
@@ -16,7 +16,7 @@ data:
 
       # Main Fallback Engine
       - type: main_fallback
-        engine: gemini_pro
+        engine: google_genai
         model: gemini-2.0-flash
         parameters:
           temperature: 0.1
@@ -62,22 +62,6 @@ data:
           Bot Message: "{{ bot_response }}"
 
           Answer (Yes/No):
-
-  config.py: |
-    import os
-    from nemoguardrails.llm.providers import register_llm_provider
-    from langchain_google_genai import ChatGoogleGenerativeAI
-
-    def create_gemini_flash_llm(**kwargs):
-        temp = kwargs.get('temperature', 0.1)
-        return ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=temp)
-
-    def create_gemini_pro_llm(**kwargs):
-        temp = kwargs.get('temperature', 0.1)
-        return ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=temp)
-
-    register_llm_provider("gemini_flash", create_gemini_flash_llm)
-    register_llm_provider("gemini_pro", create_gemini_pro_llm)
 
   rails.co: |
     # DSL Colang v2 — Regras da Política Bancária & Auditing Agêntico
