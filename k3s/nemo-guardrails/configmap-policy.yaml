@@ -12,6 +12,7 @@ data:
         engine: openai
         model: qwen2.5:3b
         parameters:
+          model_name: "qwen2.5:3b"
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
 
@@ -20,6 +21,7 @@ data:
         engine: openai
         model: qwen2.5:3b
         parameters:
+          model_name: "qwen2.5:3b"
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
 
@@ -28,6 +30,7 @@ data:
         engine: openai
         model: qwen2.5-coder:3b
         parameters:
+          model_name: "qwen2.5-coder:3b"
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
 
@@ -36,6 +39,7 @@ data:
         engine: openai
         model: granite3-guardian:2b
         parameters:
+          model_name: "granite3-guardian:2b"
           openai_api_base: "http://granite-guardian-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
 
@@ -43,6 +47,7 @@ data:
         engine: openai
         model: granite3-guardian:2b
         parameters:
+          model_name: "granite3-guardian:2b"
           openai_api_base: "http://granite-guardian-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
 
