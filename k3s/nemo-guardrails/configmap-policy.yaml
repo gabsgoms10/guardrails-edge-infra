@@ -7,13 +7,12 @@ data:
   config.yml: |
     colang_version: "1.0"
     models:
-      # 1. Main Agent Reasoning Engine (Google Gemini 2.0 Flash)
+      # 1. Main Reasoning Engine (In-Cluster Ollama Service - Zero Cloud Rate Limits)
       - type: main
-        engine: google_genai
-        model: gemini-2.0-flash
+        engine: ollama
+        model: granite3-guardian:2b
         parameters:
-          temperature: 0.1
-          max_retries: 1
+          base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
 
       # 2. Resilient In-Cluster Fallback Engine (Ollama / K3s Service - Zero Cloud Rate Limits)
       - type: main_fallback
