@@ -7,10 +7,10 @@ data:
   config.yml: |
     colang_version: "1.0"
     models:
-      # 1. Main Agent Reasoning Engine (Google Gemini 2.0 Flash)
+      # 1. Main Agent Reasoning Engine (Google Gemini 1.5 Pro)
       - type: main
         engine: google_genai
-        model: gemini-2.0-flash
+        model: gemini-1.5-pro
         parameters:
           temperature: 0.1
           max_retries: 3
@@ -18,7 +18,7 @@ data:
       # Main Fallback Engine
       - type: main_fallback
         engine: google_genai
-        model: gemini-2.0-flash
+        model: gemini-2.0-flash-lite
         parameters:
           temperature: 0.1
           max_retries: 3
