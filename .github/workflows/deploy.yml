@@ -126,12 +126,12 @@ jobs:
           kubectl port-forward svc/nemo-guardrails-service -n guardrails 18000:8000 &
           PF_PID=$!
           sleep 4
-          NEMO_INFER=$(wget -qO- \
+          NEMO_INFER=$(wget -O- \
             --method=POST \
             --header='Content-Type: application/json' \
             --body-data='{"model":"gemini-1.5-flash","config_id":"config","messages":[{"role":"user","content":"Hello"}]}' \
-            http://127.0.0.1:18000/v1/chat/completions \
-            || echo 'LLM_INFERENCE_READY')
+            --timeout=120 \
+            http://127.0.0.1:18000/v1/chat/completions 2>&1)
           kill $PF_PID 2>/dev/null || true
           echo "   Test   -> POST /v1/chat/completions via port-forward (GNU wget, Content-Type: application/json)"
           echo "   Result -> SUCCESS: Live Gemini & NeMo Inference Active (${NEMO_INFER})"
