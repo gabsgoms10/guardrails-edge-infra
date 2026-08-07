@@ -6,8 +6,9 @@ on:
       - main
 
 jobs:
-  deploy-to-k3s:
-    name: Apply K3s Manifests on Edge Node
+  # STAGE 1: DEPLOYMENT & ROLLOUT
+  deploy-k3s:
+    name: 1. Deploy K3s Manifests & Verify Rollout
     runs-on: self-hosted
     env:
       KUBECONFIG: /home/ubuntu/.kube/config
@@ -36,13 +37,32 @@ jobs:
         run: |
           kubectl apply -k k3s/
 
-      - name: Verify Deployment Rollout Status
+      - name: Display Real-Time Cluster Pod Status & Events
         run: |
-          kubectl rollout status deployment/postgres -n guardrails --timeout=300s
-          kubectl rollout status deployment/granite-guardian -n guardrails --timeout=300s
-          kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=600s
+          echo "======================================================="
+          echo "📊 Current Pod Status in 'guardrails' Namespace"
+          echo "======================================================="
+          kubectl get pods -n guardrails -o wide
+          echo ""
+          echo "📜 Recent K3s Cluster Events:"
+          kubectl get events -n guardrails --sort-by='.metadata.creationTimestamp' | tail -n 10
 
-      - name: Automated Post-Deploy Health & Integration Tests
+      - name: Fast Rollout Verification
+        run: |
+          kubectl rollout status deployment/postgres -n guardrails --timeout=120s
+          kubectl rollout status deployment/granite-guardian -n guardrails --timeout=120s
+          kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=180s
+
+  # STAGE 2: POST-DEPLOYMENT HEALTH & INTEGRATION TESTS (ONLY RUNS IF STAGE 1 SUCCEEDS)
+  integration-health-tests:
+    name: 2. Automated Post-Deploy Integration Tests
+    needs: deploy-k3s
+    runs-on: self-hosted
+    env:
+      KUBECONFIG: /home/ubuntu/.kube/config
+
+    steps:
+      - name: Run Automated Health Checks
         run: |
           echo "======================================================="
           echo "📊 Running Automated Health Checks & Integration Tests"
