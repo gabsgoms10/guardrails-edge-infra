@@ -7,39 +7,44 @@ data:
   config.yml: |
     colang_version: "1.0"
     models:
-      # 1. Main Reasoning Engine (Qwen 2.5 3B via Dedicated qwen-engine-service)
+      # 1. Main Reasoning Engine (Qwen 2.5 3B via Ollama OpenAI-compatible API)
       - type: main
-        engine: ollama
+        engine: openai
         model: qwen2.5:3b
         parameters:
-          base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
+          openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
+          openai_api_key: "ollama"
 
       # Explicit model mapping for OpenAI API requests specifying model: qwen2.5:3b
       - type: qwen2.5:3b
-        engine: ollama
+        engine: openai
         model: qwen2.5:3b
         parameters:
-          base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
+          openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
+          openai_api_key: "ollama"
 
       # 2. Resilient Fallback Engine
       - type: main_fallback
-        engine: ollama
+        engine: openai
         model: qwen2.5-coder:3b
         parameters:
-          base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
+          openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
+          openai_api_key: "ollama"
 
-      # 2. Local Risk Classifier Engine (IBM Granite Guardian 2B via Ollama K3s Cluster Service)
+      # 3. Local Risk Classifier Engine (IBM Granite Guardian 2B via Ollama OpenAI-compatible API)
       - type: self_check_input
-        engine: ollama
+        engine: openai
         model: granite3-guardian:2b
         parameters:
-          base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
+          openai_api_base: "http://granite-guardian-service.guardrails.svc.cluster.local:11434/v1"
+          openai_api_key: "ollama"
 
       - type: self_check_output
-        engine: ollama
+        engine: openai
         model: granite3-guardian:2b
         parameters:
-          base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
+          openai_api_base: "http://granite-guardian-service.guardrails.svc.cluster.local:11434/v1"
+          openai_api_key: "ollama"
 
     rails:
       input:

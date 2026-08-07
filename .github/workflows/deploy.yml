@@ -163,6 +163,10 @@ jobs:
               total_dur_ns = data.get('total_duration', 0)
               prompt_eval_count = data.get('prompt_eval_count', 0)
               
+              if eval_count == 0:
+                  print(f'❌ FAIL: Granite Benchmark returned 0 tokens or invalid response: {raw}')
+                  sys.exit(1)
+
               eval_sec = eval_dur_ns / 1e9 if eval_dur_ns else 0
               total_sec = total_dur_ns / 1e9 if total_dur_ns else 0
               tps = (eval_count / eval_sec) if eval_sec > 0 else 0
@@ -177,7 +181,8 @@ jobs:
               print(f'   Total E2E Latency  : {total_sec:.3f} s ({total_dur_ns / 1e6:.1f} ms)')
               print(f'   ⚡ INFERENCE SPEED  : {tps:.2f} TOKENS / SECOND')
           except Exception as e:
-              print(f'   Benchmark Status   : Model loading in progress ({e})')
+              print(f'❌ FAIL: Granite Benchmark exception: {e} | Raw: {raw}')
+              sys.exit(1)
           "
           echo "========================================================================"
 
@@ -199,6 +204,10 @@ jobs:
               total_dur_ns = data.get('total_duration', 0)
               prompt_eval_count = data.get('prompt_eval_count', 0)
               
+              if eval_count == 0:
+                  print(f'❌ FAIL: Qwen Benchmark returned 0 tokens or invalid response: {raw}')
+                  sys.exit(1)
+
               eval_sec = eval_dur_ns / 1e9 if eval_dur_ns else 0
               total_sec = total_dur_ns / 1e9 if total_dur_ns else 0
               tps = (eval_count / eval_sec) if eval_sec > 0 else 0
@@ -213,7 +222,8 @@ jobs:
               print(f'   Total E2E Latency  : {total_sec:.3f} s ({total_dur_ns / 1e6:.1f} ms)')
               print(f'   ⚡ INFERENCE SPEED  : {tps:.2f} TOKENS / SECOND')
           except Exception as e:
-              print(f'   Benchmark Status   : Model loading in progress ({e})')
+              print(f'❌ FAIL: Qwen Benchmark exception: {e} | Raw: {raw}')
+              sys.exit(1)
           "
           echo "========================================================================"
 
