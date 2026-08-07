@@ -149,8 +149,8 @@ jobs:
               http://127.0.0.1:18000/v1/chat/completions || echo "{}")
             
             if echo "$NEMO_SAFE" | grep -qi "RESOURCE_EXHAUSTED\|Internal server error"; then
-              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 16s before retry (Attempt $attempt/3)..."
-              sleep 16
+              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 36s for quota reset before retry (Attempt $attempt/3)..."
+              sleep 36
             else
               break
             fi
@@ -185,8 +185,8 @@ jobs:
               http://127.0.0.1:18000/v1/chat/completions || echo "{}")
             
             if echo "$NEMO_INJECT" | grep -qi "RESOURCE_EXHAUSTED\|Internal server error"; then
-              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 16s before retry (Attempt $attempt/3)..."
-              sleep 16
+              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 36s for quota reset before retry (Attempt $attempt/3)..."
+              sleep 36
             else
               break
             fi
@@ -221,8 +221,8 @@ jobs:
               http://127.0.0.1:18000/v1/chat/completions || echo "{}")
             
             if echo "$NEMO_PIX" | grep -qi "RESOURCE_EXHAUSTED\|Internal server error"; then
-              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 16s before retry (Attempt $attempt/3)..."
-              sleep 16
+              echo "⚠️ Rate limit 429 / Internal server error detected from Google API. Waiting 36s for quota reset before retry (Attempt $attempt/3)..."
+              sleep 36
             else
               break
             fi
