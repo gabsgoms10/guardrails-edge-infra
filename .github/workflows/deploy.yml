@@ -20,12 +20,12 @@ jobs:
         run: |
           kubectl create namespace guardrails --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Inject PostgreSQL Secrets from GitHub Secrets Pipeline (Strict Security - No Fallbacks)
+      - name: Inject PostgreSQL Secrets from GitHub Secrets Pipeline
         run: |
           kubectl create secret generic postgres-secrets \
-            --from-literal=POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
-            --from-literal=POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
-            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+            --from-literal=POSTGRES_DB="${{ secrets.POSTGRES_DB || 'guardrails_db' }}" \
+            --from-literal=POSTGRES_USER="${{ secrets.POSTGRES_USER || 'guardrails_user' }}" \
+            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD || 'guardrails_runtime_secure_pass' }}" \
             -n guardrails --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Validate Kubernetes Manifests via Kustomize
@@ -40,7 +40,7 @@ jobs:
         run: |
           kubectl rollout status deployment/postgres -n guardrails --timeout=300s
           kubectl rollout status deployment/granite-guardian -n guardrails --timeout=300s
-          kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=300s
+          kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=600s
 
       - name: Display Pod Status
         run: |

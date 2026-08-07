@@ -5,7 +5,9 @@
 ---
 
 ## 📖 Extended Documentation
-- 📄 **[Technical K3s Deployment Specification (Detailed Breakdown)](./docs/k3s-deployment-details.md)**
+- 📄 **[Technical K3s Deployment Specification](./docs/k3s-deployment-details.md)**
+- 🤖 **[GitHub Actions Self-Hosted Runner & Operations Guide](./docs/github-actions-runner-guide.md)**
+- 🐘 **[PostgreSQL Database & Schema Operations Guide](./docs/database-operations-guide.md)**
 
 ---
 
@@ -58,7 +60,9 @@ guardrails-edge-infra/
 │   └── workflows/
 │       └── deploy.yml               # GitOps pipeline executing on self-hosted runner
 ├── docs/
-│   └── k3s-deployment-details.md    # In-depth technical specification
+│   ├── k3s-deployment-details.md    # In-depth technical specification
+│   ├── github-actions-runner-guide.md # CI/CD & runner management guide
+│   └── database-operations-guide.md # PostgreSQL queries & maintenance guide
 ├── k3s/
 │   ├── namespace.yaml               # 'guardrails' namespace
 │   ├── guardian/
