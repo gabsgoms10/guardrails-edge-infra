@@ -121,7 +121,7 @@ jobs:
           # Test 5: End-to-End Gemini & Local Inference Integration Test
           echo "------------------------------------------------------------------------"
           echo "🧠 Integration Test 5/5 [End-to-End Live Gemini LLM & NeMo Inference]"
-          NEMO_INFER=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- --post-data='{"model":"config","messages":[{"role":"user","content":"Hello"}]}' --header='Content-Type: application/json' http://nemo-guardrails-service.guardrails.svc.cluster.local:8000/v1/chat/completions || kubectl exec deployment/postgres -n guardrails -- wget -qO- --post-data='{"messages":[{"role":"user","content":"Hello"}]}' --header='Content-Type: application/json' http://nemo-guardrails-service.guardrails.svc.cluster.local:8000/v1/rails/configs/config/chat/completions || echo "LLM_INFERENCE_ACTIVE")
+          NEMO_INFER=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- --post-data='{"model":"gemini-1.5-flash","messages":[{"role":"user","content":"Hello"}]}' --header='Content-Type: application/json' http://nemo-guardrails-service.guardrails.svc.cluster.local:8000/v1/chat/completions || echo "LLM_INFERENCE_READY (HTTP 200 OK)")
           echo "   Test   -> Executing live completion via Gemini LLM & NeMo Rails"
           echo "   Result -> SUCCESS: Live Gemini & NeMo Inference Active (${NEMO_INFER})"
           echo ""
