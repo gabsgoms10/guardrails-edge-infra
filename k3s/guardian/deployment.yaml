@@ -26,6 +26,8 @@ spec:
             until ollama list > /dev/null 2>&1; do sleep 1; done
             echo "Pulling IBM Granite Guardian 2B model weights..."
             ollama pull granite3-guardian:2b || true
+            ollama cp granite3-guardian:2b self_check_input || true
+            ollama cp granite3-guardian:2b self_check_output || true
             wait
         env:
         - name: OLLAMA_MODELS

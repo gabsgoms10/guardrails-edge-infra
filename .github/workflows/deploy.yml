@@ -81,14 +81,19 @@ jobs:
       KUBECONFIG: /home/ubuntu/.kube/config
 
     steps:
-      - name: ♨️ Model Warm-up — Force Ollama Weights Download
+      - name: ♨️ Model Warm-up — Force Ollama Weights Download & Create Model Aliases
         run: |
           echo "========================================================================"
-          echo "🔥 Forcing model weights download for Granite and Qwen directly on pods..."
+          echo "🔥 Forcing model weights download & aliases for Granite and Qwen..."
           echo "========================================================================"
           kubectl exec deployment/granite-guardian -n guardrails -- ollama pull granite3-guardian:2b
+          kubectl exec deployment/granite-guardian -n guardrails -- ollama cp granite3-guardian:2b self_check_input || true
+          kubectl exec deployment/granite-guardian -n guardrails -- ollama cp granite3-guardian:2b self_check_output || true
+          
           kubectl exec deployment/qwen-engine -n guardrails -- ollama pull qwen2.5:3b
-          echo "✅ Model weights downloaded successfully."
+          kubectl exec deployment/qwen-engine -n guardrails -- ollama cp qwen2.5:3b main || true
+          kubectl exec deployment/qwen-engine -n guardrails -- ollama cp qwen2.5:3b main_fallback || true
+          echo "✅ Model weights downloaded & aliases created successfully."
 
       - name: 🐘 Infra Test 1/11 — PostgreSQL Database & Seed Integrity
         run: |

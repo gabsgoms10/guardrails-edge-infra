@@ -26,6 +26,7 @@ spec:
             until ollama list > /dev/null 2>&1; do sleep 1; done
             echo "Pulling Qwen 2.5 3B reasoning & tool-calling model weights..."
             ollama pull qwen2.5:3b || true
+            ollama cp qwen2.5:3b main || true
             wait
         env:
         - name: OLLAMA_MODELS
