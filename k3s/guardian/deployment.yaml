@@ -37,10 +37,10 @@ spec:
         - containerPort: 11434
         resources:
           limits:
-            memory: 1800Mi
-            cpu: 1500m
+            memory: 3200Mi
+            cpu: 2000m
           requests:
-            memory: 800Mi
+            memory: 1200Mi
             cpu: 500m
         readinessProbe:
           httpGet:
@@ -48,6 +48,12 @@ spec:
             port: 11434
           initialDelaySeconds: 15
           periodSeconds: 5
+        volumeMounts:
+        - name: ollama-storage
+          mountPath: /root/.ollama
+      volumes:
+      - name: ollama-storage
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
