@@ -12,6 +12,7 @@ data:
         engine: ollama
         model: qwen2.5:3b
         parameters:
+          model: qwen2.5:3b
           base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
 
       # Explicit model mapping for OpenAI API requests specifying model: qwen2.5:3b
@@ -19,6 +20,7 @@ data:
         engine: ollama
         model: qwen2.5:3b
         parameters:
+          model: qwen2.5:3b
           base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
 
       # 2. Resilient Fallback Engine
@@ -26,6 +28,7 @@ data:
         engine: ollama
         model: qwen2.5-coder:3b
         parameters:
+          model: qwen2.5-coder:3b
           base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
 
       # 2. Local Risk Classifier Engine (IBM Granite Guardian 2B via Ollama K3s Cluster Service)
@@ -33,12 +36,14 @@ data:
         engine: ollama
         model: granite3-guardian:2b
         parameters:
+          model: granite3-guardian:2b
           base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
 
       - type: self_check_output
         engine: ollama
         model: granite3-guardian:2b
         parameters:
+          model: granite3-guardian:2b
           base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
 
     rails:
