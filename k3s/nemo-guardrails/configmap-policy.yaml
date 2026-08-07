@@ -5,6 +5,7 @@ metadata:
   namespace: guardrails
 data:
   config.yml: |
+    colang_version: "2.0"
     models:
       # 1. Main Agent Reasoning Engine (Google Gemini 1.5 Flash)
       - type: main
