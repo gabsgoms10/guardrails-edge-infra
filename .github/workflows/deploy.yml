@@ -119,22 +119,23 @@ jobs:
           echo ""
 
           # Test 5: End-to-End Gemini & Local Inference Integration Test
-          # Uses kubectl exec into the NeMo pod itself + Python urllib to bypass busybox wget JSON encoding issues
+          # Writes Python script via stdin into the NeMo pod to avoid YAML quoting conflicts
           echo "------------------------------------------------------------------------"
           echo "🧠 Integration Test 5/5 [End-to-End Live Gemini LLM & NeMo Inference]"
-          NEMO_INFER=$(kubectl exec deployment/nemo-guardrails-server -n guardrails -- python3 -c "
-import urllib.request, json, sys
+          NEMO_INFER=$(kubectl exec -i deployment/nemo-guardrails-server -n guardrails -- python3 - <<'PYEOF'
+import urllib.request, json
 try:
-    payload = json.dumps({'config_id': 'config', 'messages': [{'role': 'user', 'content': 'Hello'}]}).encode()
-    req = urllib.request.Request('http://localhost:8000/v1/chat/completions', data=payload, headers={'Content-Type': 'application/json'}, method='POST')
+    payload = json.dumps({"config_id": "config", "messages": [{"role": "user", "content": "Hello"}]}).encode()
+    req = urllib.request.Request("http://localhost:8000/v1/chat/completions", data=payload, headers={"Content-Type": "application/json"}, method="POST")
     with urllib.request.urlopen(req, timeout=30) as resp:
         body = json.loads(resp.read().decode())
-        content = body.get('choices', [{}])[0].get('message', {}).get('content', '')
-        print(f'LLM_INFERENCE_OK: {content[:80]}')
+        content = body.get("choices", [{}])[0].get("message", {}).get("content", "")
+        print("LLM_INFERENCE_OK: " + content[:80])
 except Exception as e:
-    print(f'ERROR: {e}')
-" 2>&1 || echo "LLM_INFERENCE_READY (HTTP 200 OK)")
-          echo "   Test   -> Executing live completion via Gemini LLM & NeMo Rails (Python urllib via localhost)"
+    print("ERROR: " + str(e))
+PYEOF
+          )
+          echo "   Test   -> Executing live completion via Gemini LLM & NeMo Rails (Python urllib stdin into NeMo pod)"
           echo "   Result -> SUCCESS: Live Gemini & NeMo Inference Active (${NEMO_INFER})"
           echo ""
           
