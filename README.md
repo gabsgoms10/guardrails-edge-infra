@@ -21,7 +21,7 @@ This repository (`guardrails-edge-infra`) serves as the edge infrastructure plat
 
 ### ⚡ 2. Inference Cost Optimization (FinOps)
 - **Problem**: Enterprise AI applications incur unnecessary cloud inference costs when processing out-of-scope or malicious queries on generalist LLMs.
-- **Technical Solution**: An **Input Rail** coupled with a local specialized classifier (**IBM Granite Guardian 3.0 2B**, running natively inside the edge K3s cluster) evaluates prompt risk in **<15ms**, avoiding primary LLM token consumption for blocked prompts.
+- **Technical Solution**: An **Input Rail** coupled with a local specialized classifier (**IBM Granite Guardian 3.0 2B**, running natively inside the edge K3s cluster) evaluates prompt risk at the edge (empirical latency ~300ms - 800ms vs ~4s+ cloud API roundtrips), completely avoiding primary LLM token consumption for blocked prompts.
 
 ### 🏦 3. Real-Time Visual Ledger & State Verification
 - **Demonstration**: The system exposes live PostgreSQL account balances for test characters (**Leo Vance**, **Maria Silva**, **Enterprise X Corp**). In *"Un-guarded"* mode, an injection payload simulates account balance drainage; in *"Guarded"* mode, NeMo intercepts the tool invocation prior to commit, maintaining state integrity in PostgreSQL.
