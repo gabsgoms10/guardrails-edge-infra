@@ -14,6 +14,13 @@ data:
         parameters:
           base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
 
+      # Explicit model mapping for OpenAI API requests specifying model: qwen2.5:3b
+      - type: qwen2.5:3b
+        engine: ollama
+        model: qwen2.5:3b
+        parameters:
+          base_url: "http://qwen-engine-service.guardrails.svc.cluster.local:11434"
+
       # 2. Resilient Fallback Engine
       - type: main_fallback
         engine: ollama
