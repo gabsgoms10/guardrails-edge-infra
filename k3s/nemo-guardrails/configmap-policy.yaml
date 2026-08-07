@@ -7,10 +7,10 @@ data:
   config.yml: |
     colang_version: "1.0"
     models:
-      # 1. Main Agent Reasoning Engine (Google Gemini 2.0 Flash)
+      # 1. Main Agent Reasoning Engine (Google Gemini 2.0 Flash Lite - 500 RPD Quota)
       - type: main
         engine: google_genai
-        model: gemini-2.0-flash
+        model: gemini-2.0-flash-lite
         parameters:
           temperature: 0.1
           max_retries: 3
