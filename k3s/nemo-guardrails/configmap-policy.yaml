@@ -7,17 +7,17 @@ data:
   config.yml: |
     colang_version: "1.0"
     models:
-      # 1. Main Reasoning Engine (In-Cluster Ollama Service - Zero Cloud Rate Limits)
+      # 1. Main Reasoning Engine (Ultra-fast General Chat LLM via Ollama K3s Service)
       - type: main
         engine: ollama
-        model: granite3-guardian:2b
+        model: llama3.2:1b
         parameters:
           base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
 
-      # 2. Resilient In-Cluster Fallback Engine (Ollama / K3s Service - Zero Cloud Rate Limits)
+      # 2. Resilient Fallback Engine
       - type: main_fallback
         engine: ollama
-        model: granite3-guardian:2b
+        model: qwen2.5:1.5b
         parameters:
           base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
 
