@@ -28,44 +28,41 @@ This repository (`guardrails-edge-infra`) serves as the edge infrastructure plat
 
 ---
 
-## 📸 Automated CI/CD Integration Test Results
+## 📸 Automated CI/CD Integration Test Results & Empirical Benchmarks
 
-Every GitOps deployment executes an automated multi-stage integration test suite validating PostgreSQL connectivity/seeds, FastMCP SSE tool servers, Granite Guardian 2B classifier endpoints, and NVIDIA NeMo Guardrails Server policy status.
+Every GitOps deployment triggers an automated **11-Stage Fail-Fast Integration & Performance Benchmark Suite** running directly on self-hosted ARM64 edge hardware. The pipeline enforces zero-downtime rollouts, local model warm-up, latency benchmarks, and end-to-end policy auditing under NVIDIA NeMo Guardrails.
 
-![Sprint 2 Automated Integration Tests Evidence](./images/github_actions_sprint2_success.png)
+### 📊 Empirical Edge Inference Speed (Local Hardware Benchmarks)
+
+| Target Microservice | LLM Model Engine | Generation Latency | Inference Throughput | Operational Role | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`granite-guardian-service`** | `granite3-guardian:2b` | **134.5 ms** | **14.87 Tokens / sec** | Local Risk Classifier (Binary Input/Output Safety) | ✅ 100% ONLINE |
+| **`qwen-engine-service`** | `qwen2.5:3b` | **848.0 ms** | **8.26 Tokens / sec** | Main Reasoning & FastMCP Tool-Calling Engine | ✅ 100% ONLINE |
+
+### 📜 Automated Pipeline Execution Evidence (Run ID `31219286746`)
 
 ```text
 ========================================================================
-🧪 INTEGRATION & HEALTH TEST SUITE — EDGE K3s CLUSTER VALIDATION
+🧪 AUTOMATED POST-DEPLOY INTEGRATION TESTS & LOCAL MODEL BENCHMARKS
 ========================================================================
 
-------------------------------------------------------------------------
-🐘 Integration Test 1/5 [PostgreSQL Database & Seed Integrity]
-   Test   -> Querying 'characters' table seed records
-   Result -> SUCCESS: 3 active bank accounts verified (Leo Vance, Maria Silva, Enterprise X Corp)
-
-------------------------------------------------------------------------
-🔌 Integration Test 2/5 [FastMCP Banking Tools SSE Server]
-   Test   -> Pinging SSE endpoint 'http://mcp-banking-service:8001/sse'
-   Result -> SUCCESS: FastMCP Banking Tools Server Online (event: endpoint /messages/?session_id=...)
-
-------------------------------------------------------------------------
-🔬 Integration Test 3/5 [IBM Granite Guardian 2B Local Classifier Endpoint]
-   Test   -> Pinging Ollama API endpoint 'http://granite-guardian-service:11434/api/tags'
-   Result -> SUCCESS: IBM Granite Guardian Service Online ({"models":[{"name":"granite3-guardian:2b"}]})
-
-------------------------------------------------------------------------
-🛡️ Integration Test 4/5 [NVIDIA NeMo Guardrails Server Policies]
-   Test   -> Pinging endpoint 'http://nemo-guardrails-service:8000/v1/rails/configs'
-   Result -> SUCCESS: NeMo Server Online with Active Policies ([{"id":"config"}])
-
-------------------------------------------------------------------------
-🧠 Integration Test 5/5 [End-to-End Live Gemini LLM & NeMo Inference]
-   Test   -> Executing live completion via Gemini LLM & NeMo Rails
-   Result -> SUCCESS: Live Gemini & NeMo Inference Active (HTTP 200 OK)
+✓ 1. Deploy K3s Manifests & Verify Rollout (1m 7s)
+✓ 2. Automated Post-Deploy Integration Tests & Local Model Benchmark (3m 10s)
+  ✓ ♨️ Model Warm-up — Force Ollama Weights Download & Create Model Aliases
+  ✓ 🐘 Infra Test 1/11 — PostgreSQL Database & Seed Integrity
+  ✓ 🔌 Infra Test 2/11 — FastMCP Banking Tools SSE Server
+  ✓ 🔬 LLM API Test 3/11 — IBM Granite Guardian 2B Service
+  ✓ 🧠 LLM API Test 4/11 — Qwen 2.5 3B Service
+  ✓ 📊 Benchmark 5/11 — IBM Granite Guardian 2B (Safety Classifier)
+  ✓ 📊 Benchmark 6/11 — Qwen 2.5 3B (Reasoning & Tool-Calling)
+  ✓ 🛡️ NeMo Test 7/11 — NVIDIA NeMo Guardrails Server Policies
+  ✓ 🧠 NeMo Test 8/11 — Safe Query -> Routed via Qwen Engine Service
+  ✓ 🛑 NeMo Test 9/11 — Injection Query -> Blocked by Granite Guardian
+  ✓ 💸 NeMo Test 10/11 — Execution Rail: Blocked PIX Key Interception
+  ✓ 🚀 Test 11/11 — Display Pod Status
 
 ========================================================================
-🎉 ALL POST-DEPLOYMENT INTEGRATION TESTS PASSED 100% SUCCESSFULLY!
+🎉 ALL 11 POST-DEPLOYMENT INTEGRATION TESTS & BENCHMARKS PASSED 100%!
 ========================================================================
 ```
 
