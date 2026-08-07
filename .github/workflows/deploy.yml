@@ -206,8 +206,6 @@ jobs:
             kubectl logs -l app=nemo-guardrails -n guardrails --tail=100
             echo "=================================================="
             exit 1
-          fiail did not intercept blocked PIX key transfer: ${NEMO_PIX}"
-            exit 1
           fi
           
           echo ""
