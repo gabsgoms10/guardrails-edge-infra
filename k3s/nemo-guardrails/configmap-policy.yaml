@@ -58,7 +58,7 @@ data:
           Answer the user message concisely and accurately.
 
           User: {{ user_input }}
-          Assistant:
+          Bot:
 
       - task: self_check_input
         content: |
