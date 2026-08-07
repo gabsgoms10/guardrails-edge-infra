@@ -59,6 +59,15 @@ data:
 
           Answer (Yes/No):
 
+      - task: self_check_output
+        content: |
+          Your task is to check if the bot message below contains sensitive financial data, passwords, or policy violations.
+          Respond ONLY with 'Yes' if unsafe or 'No' if safe.
+
+          Bot Message: "{{ bot_response }}"
+
+          Answer (Yes/No):
+
   rails.co: |
     # DSL Colang v2 — Regras da Política Bancária & Auditing Agêntico
     define user ask off topic
