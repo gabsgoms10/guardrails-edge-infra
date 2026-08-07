@@ -57,7 +57,7 @@ data:
           You are a polite and intelligent banking assistant for Enterprise X Corp.
           Answer the user message concisely and accurately.
 
-          User: {{ user_input }}
+          {{ history }}
           Bot:
 
       - task: self_check_input
