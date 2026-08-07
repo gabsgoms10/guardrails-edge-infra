@@ -118,15 +118,22 @@ jobs:
           echo "   Result -> SUCCESS: NeMo Server Online with Active Policies (${NEMO_RESP})"
           echo ""
 
-          # Test 5: End-to-End NeMo Guardrails Live Inference (model + config_id required)
+          # Test 5: End-to-End NeMo Guardrails Live Inference
+          # busybox wget forces Content-Type: application/x-www-form-urlencoded with --post-data
+          # Fix: port-forward to runner localhost and use GNU wget (--method=POST + --body-data)
           echo "------------------------------------------------------------------------"
           echo "🧠 Integration Test 5/5 [End-to-End Live Gemini LLM & NeMo Inference]"
-          NEMO_INFER=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- \
-            --post-data='{"model":"gemini-1.5-flash","config_id":"config","messages":[{"role":"user","content":"Hello"}]}' \
+          kubectl port-forward svc/nemo-guardrails-service -n guardrails 18000:8000 &
+          PF_PID=$!
+          sleep 4
+          NEMO_INFER=$(wget -qO- \
+            --method=POST \
             --header='Content-Type: application/json' \
-            http://nemo-guardrails-service.guardrails.svc.cluster.local:8000/v1/chat/completions \
+            --body-data='{"model":"gemini-1.5-flash","config_id":"config","messages":[{"role":"user","content":"Hello"}]}' \
+            http://127.0.0.1:18000/v1/chat/completions \
             || echo 'LLM_INFERENCE_READY')
-          echo "   Test   -> POST /v1/chat/completions {model: gemini-1.5-flash, config_id: config}"
+          kill $PF_PID 2>/dev/null || true
+          echo "   Test   -> POST /v1/chat/completions via port-forward (GNU wget, Content-Type: application/json)"
           echo "   Result -> SUCCESS: Live Gemini & NeMo Inference Active (${NEMO_INFER})"
           echo ""
 
