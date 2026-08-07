@@ -108,8 +108,17 @@ jobs:
           kubectl port-forward svc/granite-guardian-service -n guardrails 18002:11434 > /dev/null 2>&1 &
           PF_PID=$!
           trap "kill $PF_PID 2>/dev/null || true" EXIT
-          sleep 3
-          GUARDIAN_RESP=$(curl -sSL --max-time 5 http://127.0.0.1:18002/api/tags)
+          
+          GUARDIAN_RESP=""
+          for i in {1..12}; do
+            GUARDIAN_RESP=$(curl -sSL --max-time 5 http://127.0.0.1:18002/api/tags || echo "{}")
+            if echo "$GUARDIAN_RESP" | grep -q "granite"; then
+              break
+            fi
+            echo "⏳ Waiting for Granite Guardian model weights to finish downloading... (Attempt $i/12)"
+            sleep 5
+          done
+          
           if echo "$GUARDIAN_RESP" | grep -q "granite"; then
             echo "✅ SUCCESS: IBM Granite Guardian Classifier Service Online (granite3-guardian:2b)."
           else
@@ -122,8 +131,17 @@ jobs:
           kubectl port-forward svc/qwen-engine-service -n guardrails 18003:11434 > /dev/null 2>&1 &
           PF_PID=$!
           trap "kill $PF_PID 2>/dev/null || true" EXIT
-          sleep 3
-          QWEN_RESP=$(curl -sSL --max-time 5 http://127.0.0.1:18003/api/tags)
+          
+          QWEN_RESP=""
+          for i in {1..12}; do
+            QWEN_RESP=$(curl -sSL --max-time 5 http://127.0.0.1:18003/api/tags || echo "{}")
+            if echo "$QWEN_RESP" | grep -q "qwen2.5"; then
+              break
+            fi
+            echo "⏳ Waiting for Qwen 2.5 3B model weights to finish downloading... (Attempt $i/12)"
+            sleep 5
+          done
+          
           if echo "$QWEN_RESP" | grep -q "qwen2.5"; then
             echo "✅ SUCCESS: Qwen 2.5 3B Reasoning & Tool-Calling Engine Service Online (qwen2.5:3b - 128k Context)."
           else
