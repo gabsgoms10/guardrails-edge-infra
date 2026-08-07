@@ -24,7 +24,7 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
-            pip install "nemoguardrails[server]" langchain langchain-google-genai langchain-community uvicorn fastapi && \
+            pip install "nemoguardrails[server]" langchain langchain-google-genai langchain-openai langchain-community uvicorn fastapi && \
             nemoguardrails server --config /app/config --default-config-id config --port 8000
         ports:
         - containerPort: 8000
