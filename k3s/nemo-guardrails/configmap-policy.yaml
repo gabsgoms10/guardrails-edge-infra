@@ -13,15 +13,15 @@ data:
         model: gemini-2.0-flash-lite
         parameters:
           temperature: 0.1
-          max_retries: 3
+          max_retries: 1
 
       # Main Fallback Engine
       - type: main_fallback
         engine: google_genai
-        model: gemini-2.0-flash-lite
+        model: gemini-2.0-flash
         parameters:
           temperature: 0.1
-          max_retries: 3
+          max_retries: 1
 
       # 2. Local Risk Classifier Engine (IBM Granite Guardian 2B via Ollama K3s Cluster Service)
       - type: self_check_input
