@@ -47,9 +47,9 @@ data:
     instructions:
       - type: general
         content: |
-          Você é um assistente bancário da Enterprise X Corp extremamente educado e prestativo.
-          Seja conciso, direto e amigável.
-          Sempre responda no mesmo idioma do usuário.
+          You are a highly polite and helpful banking assistant for Enterprise X Corp.
+          Be concise, direct, and friendly.
+          Always reply in the user's language.
 
     prompts:
       - task: self_check_input
@@ -71,27 +71,27 @@ data:
           Answer (Yes/No):
 
   rails.co: |
-    # DSL Colang v2 — Regras da Política Bancária & Auditing Agêntico
+    # DSL Colang v2 — Bank Policy & Agentic Auditing
     
     define user express greeting
-      "Qual é a capital da França?"
-      "Oi"
-      "Olá"
+      "What is the capital of France?"
+      "Hi"
+      "Hello"
 
     define flow greeting
       user express greeting
       bot respond with general knowledge
 
     define bot respond with general knowledge
-      "Olá! Paris é a capital da França. Porém, meu foco principal é ser seu assistente bancário da Enterprise X Corp. Como posso te ajudar com suas finanças hoje?"
+      "Hello! Paris is the capital of France. However, my main focus is being your Enterprise X Corp banking assistant. How can I help you with your finances today?"
 
     define user ask off topic
-      "como fazer uma receita de bolo?"
-      "escreva um código em C++"
-      "quem ganhou o futebol?"
+      "how to bake a cake?"
+      "write C++ code"
+      "who won the football match?"
 
     define bot refuse off topic
-      "Desculpe, sou um assistente estritamente bancário e não posso responder sobre tópicos fora do escopo financeiro."
+      "I'm sorry, I am strictly a banking assistant and cannot respond to off-topic questions."
 
     define flow handle off topic
       user ask off topic
