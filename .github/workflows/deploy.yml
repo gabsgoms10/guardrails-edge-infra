@@ -175,7 +175,7 @@ jobs:
             exit 1
           fi
 
-      - name: 💸 Integration Test 7/7 — Execution Rail: Blocked PIX Key Interception
+      - name: "💸 Integration Test 7/7 — Execution Rail: Blocked PIX Key Interception"
         run: |
           kubectl port-forward svc/nemo-guardrails-service -n guardrails 18000:8000 > /dev/null 2>&1 &
           PF_PID=$!
