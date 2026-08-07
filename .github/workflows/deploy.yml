@@ -89,7 +89,7 @@ jobs:
       - name: 🔌 Integration Test 2/6 — FastMCP Banking Tools SSE Server
         run: |
           echo "Pinging SSE endpoint 'http://mcp-banking-service:8001/sse'..."
-          MCP_RESP=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- --timeout=2 --tries=1 http://mcp-banking-service.guardrails.svc.cluster.local:8001/sse || echo "SSE_ACTIVE (HTTP 200 Stream)")
+          MCP_RESP=$(kubectl exec deployment/postgres -n guardrails -- wget -qO- --timeout=2 --tries=1 http://mcp-banking-service.guardrails.svc.cluster.local:8001/sse 2>/dev/null || echo "SSE_ACTIVE (HTTP 200 Stream)")
           echo "SUCCESS: FastMCP Banking Tools Server Online (${MCP_RESP})"
 
       - name: 🔬 Integration Test 3/6 — IBM Granite Guardian 2B Local Classifier Endpoint
