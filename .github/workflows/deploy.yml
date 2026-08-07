@@ -118,39 +118,13 @@ jobs:
           echo "   Result -> SUCCESS: NeMo Server Online with Active Policies (${NEMO_RESP})"
           echo ""
 
-          echo "------------------------------------------------------------------------"
-          echo "🧠 Integration Test 5/5 [End-to-End Live Gemini LLM & NeMo Inference]"
-          echo "   Test   -> Executing live completion via Gemini LLM & NeMo Rails"
-          echo "   Result -> See dedicated step below for full inference output"
-          echo ""
-          
           echo "========================================================================"
           echo "🎉 ALL POST-DEPLOYMENT INTEGRATION TESTS PASSED 100% SUCCESSFULLY!"
           echo "========================================================================"
 
-      - name: Integration Test 5 — Live Gemini LLM & NeMo Guardrails Inference
-        run: |
-          echo "------------------------------------------------------------------------"
-          echo "🧠 Integration Test 5/5 [End-to-End Live Gemini LLM & NeMo Inference]"
-          echo "   Test   -> Executing live completion via Gemini LLM & NeMo Rails"
+      - name: Integration Test 5/5 — Live Gemini LLM & NeMo Guardrails Inference
+        run: python3 scripts/test_nemo_inference.py
         shell: bash
-      - name: Integration Test 5 — NeMo Inference (Python urllib)
-        run: |
-          import urllib.request, json, sys
-          try:
-              pod = "nemo-guardrails-server"
-              import subprocess
-              payload = json.dumps({"config_id": "config", "messages": [{"role": "user", "content": "Hello"}]})
-              cmd = ["kubectl", "exec", f"deployment/{pod}", "-n", "guardrails", "--",
-                     "python3", "-c",
-                     f"import urllib.request,json\npayload={payload!r}.encode()\nreq=urllib.request.Request('http://localhost:8000/v1/chat/completions',data=payload,headers={{'Content-Type':'application/json'}},method='POST')\nwith urllib.request.urlopen(req,timeout=30) as r:\n body=json.loads(r.read().decode())\n print(body.get('choices',[{{}}])[0].get('message',{{}}).get('content','')[:120])"]
-              result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-              output = result.stdout.strip() or result.stderr.strip()
-              print(f"   Result -> SUCCESS: Live Gemini & NeMo Inference Active: {output}")
-          except Exception as e:
-              print(f"   Result -> CHECKED: {e}")
-              sys.exit(0)
-        shell: python
 
       - name: Execute Live Benchmark — IBM Granite Guardian 2B (Tokens/Sec & Latency)
         run: |
