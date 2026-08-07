@@ -7,17 +7,17 @@ data:
   config.yml: |
     colang_version: "1.0"
     models:
-      # 1. Main Reasoning Engine (Ultra-fast General Chat LLM via Ollama K3s Service)
+      # 1. Main Reasoning Engine (Qwen 2.5 3B - 128k Context, Native Tool Calling, Q8_0 High Precision)
       - type: main
         engine: ollama
-        model: llama3.2:1b
+        model: qwen2.5:3b
         parameters:
           base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
 
       # 2. Resilient Fallback Engine
       - type: main_fallback
         engine: ollama
-        model: qwen2.5:1.5b
+        model: qwen2.5-coder:3b
         parameters:
           base_url: "http://granite-guardian-service.guardrails.svc.cluster.local:11434"
 
