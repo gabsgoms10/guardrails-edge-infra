@@ -33,6 +33,10 @@ spec:
           value: "langchain"
         - name: MAIN_MODEL_ENGINE
           value: "openai"
+        - name: OPENAI_API_KEY
+          value: "ollama"
+        - name: OPENAI_API_BASE
+          value: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
         - name: GEMINI_API_KEY
           valueFrom:
             secretKeyRef:

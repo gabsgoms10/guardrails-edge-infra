@@ -14,6 +14,7 @@ data:
         parameters:
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
+          api_key: "ollama"
 
       # Explicit model mapping for OpenAI API requests specifying model: qwen2.5:3b
       - type: qwen2.5:3b
@@ -22,6 +23,7 @@ data:
         parameters:
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
+          api_key: "ollama"
 
       # 2. Resilient Fallback Engine
       - type: main_fallback
@@ -30,6 +32,7 @@ data:
         parameters:
           openai_api_base: "http://qwen-engine-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
+          api_key: "ollama"
 
       # 3. Local Risk Classifier Engine (IBM Granite Guardian 2B via Ollama OpenAI-compatible API)
       - type: self_check_input
@@ -38,6 +41,7 @@ data:
         parameters:
           openai_api_base: "http://granite-guardian-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
+          api_key: "ollama"
 
       - type: self_check_output
         engine: openai
@@ -45,6 +49,7 @@ data:
         parameters:
           openai_api_base: "http://granite-guardian-service.guardrails.svc.cluster.local:11434/v1"
           openai_api_key: "ollama"
+          api_key: "ollama"
 
     rails:
       input:
