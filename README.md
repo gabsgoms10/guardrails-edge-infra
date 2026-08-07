@@ -30,34 +30,11 @@ The overarching architectural thesis of this portfolio — engineered to make an
 
 ---
 
-## 📖 Extended Technical Documentation & Flow Specifications
-- 📄 **[Technical K3s Deployment Specification](./docs/k3s-deployment-details.md)**
-- ☸️ **[K3s Microservices Integration & Dependency Flow](./docs/k3s-mcp-integration-flow.md)**
-- 🤖 **[GitHub Actions Self-Hosted Runner & Operations Guide](./docs/github-actions-runner-guide.md)**
-- 🐘 **[PostgreSQL Database & Schema Operations Guide](./docs/database-operations-guide.md)**
+## 📸 Automated CI/CD Integration Test Results (Sprint 2 Complete)
 
----
+Every GitOps deployment executes an automated multi-stage integration test suite validating PostgreSQL connectivity/seeds, FastMCP SSE tool servers, Granite Guardian 2B classifier endpoints, and NVIDIA NeMo Guardrails Server policy status.
 
-## 📸 1. Infrastructure Evidence & Deployment Screenshots
-
-### ✅ Evidence 1: Bootstrap of K3s ARM64 Cluster (`v1.36.3+k3s1`)
-The K3s cluster was provisioned on the `saasdeploy` ARM64 node with an active control plane and non-root `kubectl` credentials.
-
-![K3s Cluster Installation Evidence](./images/k3s_install.png)
-
----
-
-### ✅ Evidence 2: GitHub Actions Self-Hosted Runner Service (`saasdeploy`)
-The runner was registered under the `Default` group and configured as a persistent `systemd` daemon, enabling secure zero-downtime GitOps deployments directly on the node without exposing port 6443 to the public internet.
-
-![GitHub Actions Self-Hosted Runner Evidence](./images/git_actions_runner_config.png)
-
----
-
-### ✅ Evidence 3: Automated Post-Deployment Integration Test Suite
-Every GitOps deployment executes an automated multi-stage integration test suite validating PostgreSQL connectivity/seeds, Granite Guardian 2B classifier endpoints, FastMCP SSE tools, and NVIDIA NeMo Guardrails Server policy status.
-
-![GitHub Actions Automated Integration Tests Result](./images/github_actions_test_results.png)
+![Sprint 2 Automated Integration Tests Evidence](./images/github_actions_sprint2_success.png)
 
 ```text
 ========================================================================
@@ -71,8 +48,8 @@ Every GitOps deployment executes an automated multi-stage integration test suite
 
 ------------------------------------------------------------------------
 🔌 Integration Test [FastMCP Banking Tools SSE Server]
-   Test   -> Pinging endpoint 'http://mcp-banking-service:8001/sse'
-   Result -> SUCCESS: FastMCP Banking Tools Server Online (SSE_ACTIVE)
+   Test   -> Pinging SSE endpoint 'http://mcp-banking-service:8001/sse'
+   Result -> SUCCESS: FastMCP Banking Tools Server Online (event: endpoint /messages/?session_id=...)
 
 ------------------------------------------------------------------------
 🔬 Integration Test [IBM Granite Guardian 2B Local Classifier]
@@ -91,6 +68,15 @@ Every GitOps deployment executes an automated multi-stage integration test suite
 
 ---
 
+## 📖 Extended Technical Documentation & Flow Specifications
+- 📄 **[Technical K3s Deployment Specification](./docs/k3s-deployment-details.md)**
+- 📊 **[LLM Quotas, Rate Limits & Multi-Model Fallback Architecture](./docs/llm-rate-limits-and-fallbacks.md)**
+- ☸️ **[K3s Microservices Integration & Dependency Flow](./docs/k3s-mcp-integration-flow.md)**
+- 🤖 **[GitHub Actions Self-Hosted Runner & Operations Guide](./docs/github-actions-runner-guide.md)**
+- 🐘 **[PostgreSQL Database & Schema Operations Guide](./docs/database-operations-guide.md)**
+
+---
+
 ## 🔬 Local Specialized Risk Classifier: Granite Guardian 2B
 
 Rather than invoking an expensive generalist LLM (like GPT-4o) for simple safety checks, our architecture runs a **specialized local classifier** directly inside the K3s cluster:
@@ -101,7 +87,7 @@ Rather than invoking an expensive generalist LLM (like GPT-4o) for simple safety
 
 ---
 
-## 🏛️ 2. Architecture Decisions & Technical Trade-offs
+## 🏛️ 1. Architecture Decisions & Technical Trade-offs
 
 ### ❓ Why K3s instead of Traditional Upstream Kubernetes (EKS / GKE / K8s)?
 
@@ -116,7 +102,7 @@ In an edge infrastructure environment with strict hardware memory constraints (1
 
 ---
 
-## 🛠️ 3. K3s Manifests & Directory Structure (GitOps)
+## 🛠️ 2. K3s Manifests & Directory Structure (GitOps)
 
 ```text
 guardrails-edge-infra/
@@ -125,6 +111,7 @@ guardrails-edge-infra/
 │       └── deploy.yml               # GitOps pipeline executing on self-hosted runner
 ├── docs/
 │   ├── k3s-deployment-details.md    # In-depth technical specification
+│   ├── llm-rate-limits-and-fallbacks.md # LLM quotas & resilience decision matrix
 │   ├── k3s-mcp-integration-flow.md  # K3s microservices dependency & flow doc
 │   ├── github-actions-runner-guide.md # CI/CD & runner management guide
 │   └── database-operations-guide.md # PostgreSQL queries & maintenance guide
@@ -146,13 +133,13 @@ guardrails-edge-infra/
 ├── images/
 │   ├── k3s_install.png              # K3s installation proof
 │   ├── git_actions_runner_config.png # GitHub Actions runner registration proof
-│   └── github_actions_test_results.png # Automated integration tests proof
+│   └── github_actions_sprint2_success.png # Automated integration tests proof
 └── README.md
 ```
 
 ---
 
-## 🔄 4. Continuous Integration & GitOps Deployment Pipeline
+## 🔄 3. Continuous Integration & GitOps Deployment Pipeline
 
 This repository leverages a **GitHub Actions Self-Hosted Runner** running as a `systemd` background service on the `saasdeploy` node.
 

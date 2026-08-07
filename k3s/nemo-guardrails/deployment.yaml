@@ -24,10 +24,23 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
-            pip install "nemoguardrails[server]" uvicorn fastapi && \
+            pip install "nemoguardrails[server]" langchain-google-genai uvicorn fastapi && \
             nemoguardrails server --config /app/config --port 8000
         ports:
         - containerPort: 8000
+        env:
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: llm-secrets
+              key: GEMINI_API_KEY
+              optional: true
+        - name: GOOGLE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: llm-secrets
+              key: GEMINI_API_KEY
+              optional: true
         resources:
           limits:
             memory: 1200Mi

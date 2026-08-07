@@ -7,8 +7,18 @@ data:
   config.yml: |
     models:
       - type: main
-        engine: openai
-        model: gpt-4o-mini
+        engine: google
+        model: gemini-1.5-flash
+        parameters:
+          temperature: 0.1
+          max_retries: 3
+
+      - type: main_fallback
+        engine: google
+        model: gemini-2.0-flash
+        parameters:
+          temperature: 0.1
+          max_retries: 3
 
     rails:
       input:
@@ -24,7 +34,6 @@ data:
 
   rails.co: |
     # DSL Colang v2 — Regras da Política Bancária
-
     define user ask off topic
       "como fazer uma receita de bolo?"
       "escreva um código em C++"
