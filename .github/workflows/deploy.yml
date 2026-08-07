@@ -126,11 +126,11 @@ jobs:
           sleep 4
           NEMO_RAW=$(curl -sSL \
             -H 'Content-Type: application/json' \
-            -d '{"messages":[{"role":"user","content":"Hello"}]}' \
+            -d '{"model":"gemini-1.5-flash","messages":[{"role":"user","content":"Hello"}]}' \
             --max-time 120 \
             "http://127.0.0.1:18000/v1/chat/completions?config_id=config" || echo "{}")
           kill $PF_PID 2>/dev/null || true
-          echo "   Test   -> POST /v1/chat/completions?config_id=config {messages: [Hello]}"
+          echo "   Test   -> POST /v1/chat/completions?config_id=config {model: gemini-1.5-flash, messages: [Hello]}"
           echo "   Result -> SUCCESS: Live Gemini & NeMo Inference Active (${NEMO_RAW})"
           echo ""
 
