@@ -32,7 +32,7 @@ spec:
         - name: NEMOGUARDRAILS_LLM_FRAMEWORK
           value: "langchain"
         - name: MAIN_MODEL_ENGINE
-          value: "google_genai"
+          value: "ollama"
         - name: GEMINI_API_KEY
           valueFrom:
             secretKeyRef:
