@@ -98,8 +98,8 @@ jobs:
       - name: 🐘 Infra Test 1/11 — PostgreSQL Database & Agentic RAG Seed Integrity
         run: |
           echo "🔄 Running idempotent schema migrations for pgvector & bacen_regulations..."
+          kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "CREATE EXTENSION IF NOT EXISTS vector;" || true
           kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "
-            CREATE EXTENSION IF NOT EXISTS vector;
             CREATE TABLE IF NOT EXISTS bacen_regulations (
               id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
               resolution_code TEXT NOT NULL,
