@@ -44,6 +44,13 @@ data:
         flows:
           - self check output
 
+    instructions:
+      - type: general
+        content: |
+          Você é um assistente bancário da Enterprise X Corp extremamente educado e prestativo.
+          Seja conciso, direto e amigável.
+          Sempre responda no mesmo idioma do usuário.
+
     prompts:
       - task: self_check_input
         content: |
@@ -65,6 +72,19 @@ data:
 
   rails.co: |
     # DSL Colang v2 — Regras da Política Bancária & Auditing Agêntico
+    
+    define user express greeting
+      "Qual é a capital da França?"
+      "Oi"
+      "Olá"
+
+    define flow greeting
+      user express greeting
+      bot respond with general knowledge
+
+    define bot respond with general knowledge
+      "Olá! Paris é a capital da França. Porém, meu foco principal é ser seu assistente bancário da Enterprise X Corp. Como posso te ajudar com suas finanças hoje?"
+
     define user ask off topic
       "como fazer uma receita de bolo?"
       "escreva um código em C++"
