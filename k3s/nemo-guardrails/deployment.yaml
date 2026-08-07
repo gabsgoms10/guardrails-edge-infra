@@ -37,9 +37,9 @@ spec:
             cpu: 300m
         readinessProbe:
           httpGet:
-            path: /v1/health
+            path: /v1/rails/configs
             port: 8000
-          initialDelaySeconds: 15
+          initialDelaySeconds: 20
           periodSeconds: 5
         volumeMounts:
         - name: policy-volume

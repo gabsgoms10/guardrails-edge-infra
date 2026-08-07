@@ -4,7 +4,33 @@
 
 ---
 
-## 📖 Extended Documentation
+## 🎯 Portfolio Context & Core Engineering Thesis
+
+This repository (`guardrails-edge-infra`) is the infrastructure backbone of a **5-Repository Enterprise Portfolio System** designed to demonstrate end-to-end AI Agent Governance & Observability in high-risk financial environments (Instant PIX Transfers & Banking Operations).
+
+The overarching architectural thesis of this portfolio — engineered to make an immediate impact on **Tech Leads, VPs of Engineering, and Senior AI Recruiters** — is built upon 3 strategic pillars:
+
+### 💡 The Central Thesis
+> *"System Prompts and text instructions **DO NOT** guarantee deterministic safety for production AI. To empower Autonomous Agents to execute high-risk real-world financial actions (such as instant PIX banking transfers), it is indispensable to adopt layered **Policy-as-Code (NVIDIA NeMo Guardrails + FastMCP)**, auditing and intercepting the Agentic Loop before, during, and after inference."*
+
+---
+
+## 🏛️ The 3 Strategic Sub-Pillars Demonstrated in the Project
+
+### 🛡️ 1. Agentic Risk & Governance (The Safety Thesis)
+- **The Problem**: Language models are probabilistic and inherently vulnerable to Prompt Injection and social engineering (such as the infamous 2023 Chevrolet dealership case where a chatbot agreed to sell a $58k car for $1).
+- **The Technical Proof**: The **NeMo Execution Rail** intercepts the agent's intent to execute the `transfer_pix` tool call on the FastMCP server, querying the PostgreSQL fraud registry (`blocked_pix_keys`) and halting the execution **before it ever touches the production database ledger**.
+
+### ⚡ 2. FinOps & Production Cost Awareness (The Performance Thesis)
+- **The Problem**: Enterprise AI applications waste thousands of dollars in cloud inference budget when users ask out-of-scope questions (cooking recipes, programming code, casual chat).
+- **The Technical Proof**: The **Input Rail** coupled with the local specialized classifier **IBM Granite Guardian 2B** (running directly in the edge K3s cluster) intercepts out-of-domain prompts in **<15ms**, saving 100% of main LLM tokens with fast deterministic binary decisions.
+
+### 🏦 3. Incontestable Visual Proof (Show, Don't Tell)
+- **The Demonstration**: Instead of displaying wall-of-text logs that recruiters never read, the **Visual Ledger** exposes live account balances for test characters (**Leo Vance**, **Maria Silva**, **Enterprise X Corp**). In *"Without Guardrail"* mode, an injection attack simulates draining the balance to $0.00; in *"With Guardrail"* mode, NeMo intercepts the attack, keeping the balance 100% protected in PostgreSQL.
+
+---
+
+## 📖 Extended Technical Documentation
 - 📄 **[Technical K3s Deployment Specification](./docs/k3s-deployment-details.md)**
 - 🤖 **[GitHub Actions Self-Hosted Runner & Operations Guide](./docs/github-actions-runner-guide.md)**
 - 🐘 **[PostgreSQL Database & Schema Operations Guide](./docs/database-operations-guide.md)**

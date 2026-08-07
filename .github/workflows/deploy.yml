@@ -21,12 +21,12 @@ jobs:
         run: |
           kubectl create namespace guardrails --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Inject PostgreSQL Secrets from GitHub Secrets Pipeline
+      - name: Inject PostgreSQL Secrets from GitHub Secrets Pipeline (Strict Security - Zero Fallbacks)
         run: |
           kubectl create secret generic postgres-secrets \
-            --from-literal=POSTGRES_DB="${{ secrets.POSTGRES_DB || 'guardrails_db' }}" \
-            --from-literal=POSTGRES_USER="${{ secrets.POSTGRES_USER || 'guardrails_user' }}" \
-            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD || 'guardrails_runtime_secure_pass' }}" \
+            --from-literal=POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
+            --from-literal=POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
             -n guardrails --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Validate Kubernetes Manifests via Kustomize
@@ -70,7 +70,7 @@ jobs:
           
           # 1. Test PostgreSQL DB connectivity & seed integrity
           echo "🐘 [TEST 1/3] Verifying PostgreSQL connection and table seed..."
-          kubectl exec deployment/postgres -n guardrails -- psql -U guardrails_user -d guardrails_db -c "SELECT count(*) FROM characters;"
+          kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "SELECT count(*) FROM characters;"
           
           # 2. Test Granite Guardian 2B Classifier endpoint
           echo "🔬 [TEST 2/3] Verifying Granite Guardian 2B Classifier service..."
@@ -78,7 +78,7 @@ jobs:
           
           # 3. Test NeMo Guardrails Server health endpoint
           echo "🛡️ [TEST 3/3] Verifying NeMo Guardrails Server health endpoint..."
-          kubectl exec deployment/postgres -n guardrails -- wget -qO- http://nemo-guardrails-service.guardrails.svc.cluster.local:8000/v1/health || true
+          kubectl exec deployment/postgres -n guardrails -- wget -qO- http://nemo-guardrails-service.guardrails.svc.cluster.local:8000/v1/rails/configs || true
           
           echo "======================================================="
           echo "✅ All Post-Deployment Integration Tests Passed!"
