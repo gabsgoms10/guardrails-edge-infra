@@ -24,7 +24,7 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
-            pip install nemoguardrails uvicorn fastapi && \
+            pip install "nemoguardrails[server]" uvicorn fastapi && \
             nemoguardrails server --config /app/config --port 8000
         ports:
         - containerPort: 8000
@@ -39,7 +39,7 @@ spec:
           httpGet:
             path: /v1/health
             port: 8000
-          initialDelaySeconds: 30
+          initialDelaySeconds: 15
           periodSeconds: 5
         volumeMounts:
         - name: policy-volume
