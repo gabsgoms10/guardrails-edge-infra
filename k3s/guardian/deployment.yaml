@@ -28,7 +28,7 @@ spec:
             echo "Waiting for Ollama daemon to initialize..."
             until wget -qO- http://localhost:11434/api/tags > /dev/null 2>&1; do sleep 1; done
             echo "Pulling IBM Granite Guardian 2B model weights..."
-            ollama pull granite-guardian:2b || true
+            ollama pull granite3-guardian:2b || true
             wait
         env:
         - name: OLLAMA_MODELS
