@@ -118,7 +118,7 @@ jobs:
           echo "   Result -> SUCCESS: NeMo Server Online with Active Policies (${NEMO_RESP})"
           echo ""
 
-          # Test 5: End-to-End NeMo Guardrails Live Inference (Explicit Policy Endpoint: /v1/rails/configs/config/chat/completions)
+          # Test 5: End-to-End NeMo Guardrails Live Inference (/v1/chat/completions?config_id=config)
           echo "------------------------------------------------------------------------"
           echo "🧠 Integration Test 5/5 [End-to-End Live Gemini LLM & NeMo Inference]"
           kubectl port-forward svc/nemo-guardrails-service -n guardrails 18000:8000 &
@@ -128,9 +128,9 @@ jobs:
             -H 'Content-Type: application/json' \
             -d '{"messages":[{"role":"user","content":"Hello"}]}' \
             --max-time 120 \
-            http://127.0.0.1:18000/v1/rails/configs/config/chat/completions || echo "{}")
+            "http://127.0.0.1:18000/v1/chat/completions?config_id=config" || echo "{}")
           kill $PF_PID 2>/dev/null || true
-          echo "   Test   -> POST /v1/rails/configs/config/chat/completions {messages: [Hello]}"
+          echo "   Test   -> POST /v1/chat/completions?config_id=config {messages: [Hello]}"
           echo "   Result -> SUCCESS: Live Gemini & NeMo Inference Active (${NEMO_RAW})"
           echo ""
 
