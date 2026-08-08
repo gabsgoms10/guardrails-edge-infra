@@ -47,7 +47,22 @@ data:
       content TEXT NOT NULL,
       keywords TEXT[],
       created_at TIMESTAMPTZ DEFAULT NOW()
+    -- Table: eval_queue (DB-Backed Job Queue for Asynchronous LLM Judge Execution)
+    CREATE TABLE IF NOT EXISTS eval_queue (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      trace_id TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      attempts INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      locked_at TIMESTAMPTZ,
+      completed_at TIMESTAMPTZ,
+      last_error TEXT
     );
+
+    CREATE INDEX IF NOT EXISTS idx_eval_queue_pending
+    ON eval_queue (created_at)
+    WHERE status = 'pending';
 
     -- Idempotent Seed Data (English International Format)
     INSERT INTO characters (id, name, pix_key, balance_cents, risk_profile, avatar_seed)
