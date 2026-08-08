@@ -443,6 +443,77 @@ jobs:
           kubectl logs -l app=nemo-guardrails -n guardrails --tail=40
           echo "======================================================="
 
-      - name: 🚀 Test 11/11 — Display Pod Status
+      - name: 🚀 Test 12/12 — Display Pod Status
         run: |
           kubectl get pods -n guardrails
+
+  e2e-agent-tests:
+    name: 🤖 3. Real E2E Agent Execution & Financial Flow Verification
+    needs: [deploy, integration-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔑 Set up Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: 🔌 Port-Forward Autonomous Banking Agent Service
+        run: |
+          kubectl port-forward svc/app-banking-agent-service -n guardrails 18002:8002 > /dev/null 2>&1 &
+          PF_PID=$!
+          echo "PF_PID=$PF_PID" >> $GITHUB_ENV
+          sleep 5
+
+      - name: 🏥 Real E2E Test 1/4 — Agent Service Health & Readiness
+        run: |
+          HEALTH_RESP=$(curl -sSL --max-time 10 http://127.0.0.1:18002/health || true)
+          echo "Health Response: ${HEALTH_RESP}"
+          if echo "$HEALTH_RESP" | grep -qi "ok"; then
+            echo "✅ SUCCESS: Autonomous Banking Agent Service is Live & Ready."
+          else
+            echo "❌ FAIL: Banking Agent Health Check Failed!"
+            kubectl logs -l app=app-banking-agent -n guardrails --tail=50
+            exit 1
+          fi
+
+      - name: 📜 Real E2E Test 2/4 — Agentic RAG BACEN Regulations Search
+        run: |
+          RAG_RESP=$(curl -sSL --max-time 15 -H "Content-Type: application/json" \
+            -d '{"query": "limite noturno PIX"}' \
+            http://127.0.0.1:18002/rag/search || true)
+          echo "RAG Response: ${RAG_RESP}"
+          if echo "$RAG_RESP" | grep -qi "BCB-142"; then
+            echo "✅ SUCCESS: Real Agentic RAG query fetched BCB-142 regulation from PostgreSQL."
+          else
+            echo "❌ FAIL: RAG Search failed to retrieve expected BACEN regulation: ${RAG_RESP}"
+            exit 1
+          fi
+
+      - name: 💰 Real E2E Test 3/4 — Agent Account Balance Query & Tool Calling
+        run: |
+          CHAT_RESP=$(curl -sSL --max-time 30 -H "Content-Type: application/json" \
+            -d '{"message": "Qual o meu saldo atual?", "origin_key": "leo.vance@email.com"}' \
+            http://127.0.0.1:18002/chat || true)
+          echo "Agent Chat Response: ${CHAT_RESP}"
+          if echo "$CHAT_RESP" | grep -qi "success\|saldo\|R\$\|vance"; then
+            echo "✅ SUCCESS: Banking Agent executed get_account_balance tool call & returned BRL balance."
+          else
+            echo "❌ FAIL: Agent Chat Balance Query failed: ${CHAT_RESP}"
+            kubectl logs -l app=app-banking-agent -n guardrails --tail=100
+            exit 1
+          fi
+
+      - name: 💸 Real E2E Test 4/4 — Agent Instant Financial PIX Transfer Flow
+        run: |
+          TRANSFER_RESP=$(curl -sSL --max-time 35 -H "Content-Type: application/json" \
+            -d '{"message": "Transfira R$ 10,00 via PIX para maria.silva@email.com", "origin_key": "leo.vance@email.com"}' \
+            http://127.0.0.1:18002/chat || true)
+          echo "Agent Transfer Response: ${TRANSFER_RESP}"
+          if echo "$TRANSFER_RESP" | grep -qi "success\|sucesso\|transfer\|10\|maria"; then
+            echo "✅ SUCCESS: Banking Agent executed real E2E financial transfer flow."
+          else
+            echo "❌ FAIL: Agent PIX Transfer Flow failed: ${TRANSFER_RESP}"
+            kubectl logs -l app=app-banking-agent -n guardrails --tail=100
+            exit 1
+          fi
