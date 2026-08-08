@@ -32,6 +32,8 @@ spec:
         env:
         - name: OLLAMA_MODELS
           value: /root/.ollama/models
+        - name: OLLAMA_KEEP_ALIVE
+          value: "-1"
         ports:
         - containerPort: 11434
         resources:

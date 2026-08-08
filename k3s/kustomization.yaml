@@ -13,3 +13,4 @@ resources:
   - qwen/deployment.yaml
   - nemo-guardrails/configmap-policy.yaml
   - nemo-guardrails/deployment.yaml
+  - agent/deployment.yaml

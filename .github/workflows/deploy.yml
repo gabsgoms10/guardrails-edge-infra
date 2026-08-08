@@ -69,6 +69,7 @@ jobs:
           kubectl rollout status deployment/postgres -n guardrails --timeout=120s
           kubectl rollout status deployment/mlflow -n guardrails --timeout=180s || true
           kubectl rollout status deployment/mcp-banking-tools -n guardrails --timeout=180s || true
+          kubectl rollout status deployment/app-banking-agent -n guardrails --timeout=180s || true
           kubectl rollout status deployment/granite-guardian -n guardrails --timeout=300s || true
           kubectl rollout status deployment/qwen-engine -n guardrails --timeout=300s || true
           kubectl rollout status deployment/nemo-guardrails-server -n guardrails --timeout=360s || true
