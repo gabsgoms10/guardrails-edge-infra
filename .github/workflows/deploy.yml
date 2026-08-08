@@ -453,7 +453,7 @@ jobs:
     runs-on: self-hosted
     env:
       KUBECONFIG: /home/ubuntu/.kube/config
-
+    steps:
       - name: 🔌 Port-Forward Autonomous Banking Agent Service
         run: |
           kubectl port-forward svc/app-banking-agent-service -n guardrails 18002:8002 > /dev/null 2>&1 &
