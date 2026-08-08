@@ -6,6 +6,10 @@ metadata:
 data:
   config.yml: |
     colang_version: "1.0"
+    tracing:
+      enabled: true
+      opentelemetry:
+        endpoint: "http://arize-phoenix-service.guardrails.svc.cluster.local:4318/v1/traces"
     models:
       # 1. Main Reasoning Engine (Qwen 2.5 3B via Ollama OpenAI-compatible API)
       - type: main
