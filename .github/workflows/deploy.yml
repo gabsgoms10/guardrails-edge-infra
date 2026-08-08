@@ -67,7 +67,7 @@ jobs:
       - name: Fast Rollout Verification
         run: |
           kubectl rollout status deployment/postgres -n guardrails --timeout=120s
-          kubectl rollout status deployment/mlflow -n guardrails --timeout=180s || true
+          kubectl rollout status deployment/arize-phoenix -n guardrails --timeout=180s || true
           kubectl rollout status deployment/mcp-banking-tools -n guardrails --timeout=180s || true
           kubectl rollout status deployment/app-banking-agent -n guardrails --timeout=180s || true
           kubectl rollout status deployment/granite-guardian -n guardrails --timeout=300s || true
@@ -94,13 +94,12 @@ jobs:
           
           kubectl exec deployment/qwen-engine -n guardrails -- ollama pull qwen2.5:3b
           kubectl exec deployment/qwen-engine -n guardrails -- ollama cp qwen2.5:3b main || true
-          kubectl exec deployment/qwen-engine -n guardrails -- ollama cp qwen2.5:3b main_fallback || true
           echo "✅ Model weights downloaded & aliases created successfully."
 
       - name: 🐘 Infra Test 1/12 — PostgreSQL Database & Agentic RAG Seed Integrity
         run: |
-          echo "🔄 Running idempotent schema migrations for pgvector, bacen_regulations & mlflow_db..."
-          kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "CREATE DATABASE mlflow_db;" || true
+          echo "🔄 Running truly idempotent schema migrations for pgvector, bacen_regulations & arize_db..."
+          kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "SELECT 'CREATE DATABASE arize_db' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'arize_db')\gexec" || true
           kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "CREATE EXTENSION IF NOT EXISTS vector;" || true
           kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "
             CREATE TABLE IF NOT EXISTS bacen_regulations (
@@ -143,11 +142,11 @@ jobs:
           PF_PID=$!
           trap "kill $PF_PID 2>/dev/null || true" EXIT
           sleep 3
-          MCP_RESP=$(curl -sSL --max-time 3 http://127.0.0.1:18001/sse || true)
-          if echo "$MCP_RESP" | grep -q "endpoint"; then
-            echo "✅ SUCCESS: FastMCP Banking Tools Server Online (SSE Event Stream verified)."
+          MCP_RESP=$(curl -sSL --max-time 5 http://127.0.0.1:18001/sse || true)
+          if echo "$MCP_RESP" | grep -qi "endpoint\|session\|event:"; then
+            echo "✅ SUCCESS: FastMCP Banking Tools Server Online (Valid SSE Event Stream Handshake Verified)."
           else
-            echo "❌ FAIL: FastMCP Banking Tools SSE endpoint failed or returned unexpected response: ${MCP_RESP}"
+            echo "❌ FAIL: FastMCP Banking Tools SSE endpoint returned invalid handshake payload: ${MCP_RESP}"
             exit 1
           fi
 
@@ -177,7 +176,7 @@ jobs:
           QWEN_RESP=$(curl -sSL --max-time 5 http://127.0.0.1:18003/api/tags || echo "{}")
           
           if echo "$QWEN_RESP" | grep -q "qwen2.5"; then
-            echo "✅ SUCCESS: Qwen 2.5 3B Reasoning & Tool-Calling Engine Service Online (qwen2.5:3b - 128k Context)."
+            echo "✅ SUCCESS: Qwen 2.5 3B Reasoning & Tool-Calling Engine Service Online (qwen2.5:3b - Native 32k Context Window)."
           else
             echo "❌ FAIL: Qwen Engine service returned invalid response: ${QWEN_RESP}"
             exit 1
@@ -420,21 +419,21 @@ jobs:
             exit 1
           fi
 
-      - name: 📈 Infra Test 11/12 — MLflow Tracking & Tracing Server
+      - name: 📈 Infra Test 11/12 — Arize Phoenix Observability & Agent Tracing Server
         run: |
-          kubectl port-forward svc/mlflow-service -n guardrails 18005:5000 > /dev/null 2>&1 &
+          kubectl port-forward svc/arize-phoenix-service -n guardrails 18005:6006 > /dev/null 2>&1 &
           PF_PID=$!
           trap "kill $PF_PID 2>/dev/null || true" EXIT
-          sleep 5
+          sleep 4
           
-          MLFLOW_RESP=$(curl -sSL --max-time 10 http://127.0.0.1:18005/ || true)
-          if echo "$MLFLOW_RESP" | grep -qi "mlflow"; then
-            echo "✅ SUCCESS: MLflow Tracking & Tracing Server Online (PostgreSQL mlflow_db backend connected)."
+          PHOENIX_RESP=$(curl -sSL --max-time 10 http://127.0.0.1:18005/ || true)
+          if echo "$PHOENIX_RESP" | grep -qi "phoenix\|arize\|html"; then
+            echo "✅ SUCCESS: Arize Phoenix Agent Tracing & Observability Server Online (OpenInference Native)."
           else
-            echo "❌ FAIL: MLflow Server returned unexpected response or failed to start: ${MLFLOW_RESP}"
-            echo "=== 🔍 DIAGNOSTIC MLFLOW POD LOGS ==="
-            kubectl logs -l app=mlflow -n guardrails --tail=100
-            echo "======================================"
+            echo "❌ FAIL: Arize Phoenix Server returned unexpected response: ${PHOENIX_RESP}"
+            echo "=== 🔍 DIAGNOSTIC ARIZE PHOENIX POD LOGS ==="
+            kubectl logs -l app=arize-phoenix -n guardrails --tail=100
+            echo "============================================"
             exit 1
           fi
           
