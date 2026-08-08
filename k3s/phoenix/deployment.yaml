@@ -68,4 +68,4 @@ spec:
   - name: http
     port: 6006
     targetPort: 6006
-    nodePort: 30500
+    nodePort: 30600
