@@ -449,7 +449,7 @@ jobs:
 
   e2e-agent-tests:
     name: 🤖 3. Real E2E Agent Execution & Financial Flow Verification
-    needs: [deploy, integration-tests]
+    needs: [deploy, integration-health-tests]
     runs-on: ubuntu-latest
     steps:
       - name: 🔑 Set up Kubeconfig
