@@ -95,9 +95,10 @@ jobs:
           kubectl exec deployment/qwen-engine -n guardrails -- ollama cp qwen2.5:3b main_fallback || true
           echo "✅ Model weights downloaded & aliases created successfully."
 
-      - name: 🐘 Infra Test 1/11 — PostgreSQL Database & Agentic RAG Seed Integrity
+      - name: 🐘 Infra Test 1/12 — PostgreSQL Database & Agentic RAG Seed Integrity
         run: |
-          echo "🔄 Running idempotent schema migrations for pgvector & bacen_regulations..."
+          echo "🔄 Running idempotent schema migrations for pgvector, bacen_regulations & mlflow_db..."
+          kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "CREATE DATABASE mlflow_db;" || true
           kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "CREATE EXTENSION IF NOT EXISTS vector;" || true
           kubectl exec deployment/postgres -n guardrails -- psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -c "
             CREATE TABLE IF NOT EXISTS bacen_regulations (
@@ -414,6 +415,24 @@ jobs:
             echo "=== 🔍 DIAGNOSTIC NEMO POD LOGS (TEST 10 FAIL) ==="
             kubectl logs -l app=nemo-guardrails -n guardrails --tail=100
             echo "=================================================="
+            exit 1
+          fi
+
+      - name: 📈 Infra Test 11/12 — MLflow Tracking & Tracing Server
+        run: |
+          kubectl port-forward svc/mlflow-service -n guardrails 18005:5000 > /dev/null 2>&1 &
+          PF_PID=$!
+          trap "kill $PF_PID 2>/dev/null || true" EXIT
+          sleep 5
+          
+          MLFLOW_RESP=$(curl -sSL --max-time 10 http://127.0.0.1:18005/ || true)
+          if echo "$MLFLOW_RESP" | grep -qi "mlflow"; then
+            echo "✅ SUCCESS: MLflow Tracking & Tracing Server Online (PostgreSQL mlflow_db backend connected)."
+          else
+            echo "❌ FAIL: MLflow Server returned unexpected response or failed to start: ${MLFLOW_RESP}"
+            echo "=== 🔍 DIAGNOSTIC MLFLOW POD LOGS ==="
+            kubectl logs -l app=mlflow -n guardrails --tail=100
+            echo "======================================"
             exit 1
           fi
           

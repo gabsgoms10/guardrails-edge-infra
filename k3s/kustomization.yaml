@@ -7,6 +7,7 @@ resources:
   - namespace.yaml
   - postgres/configmap-seed.yaml
   - postgres/deployment.yaml
+  - mlflow/deployment.yaml
   - mcp/deployment.yaml
   - guardian/deployment.yaml
   - qwen/deployment.yaml
