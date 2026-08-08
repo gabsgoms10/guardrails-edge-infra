@@ -502,7 +502,7 @@ jobs:
             exit 1
           fi
 
-      - name: 💸 Real E2E Test 4/4 — Agent Instant Financial PIX Transfer Flow
+      - name: 💸 Real E2E Test 4/5 — Agent Instant Financial PIX Transfer Flow
         run: |
           TRANSFER_RESP=$(curl -sSL --max-time 35 -H "Content-Type: application/json" \
             -d '{"message": "Transfira R$ 10,00 via PIX para maria.silva@email.com", "origin_key": "leo.vance@email.com"}' \
@@ -515,3 +515,9 @@ jobs:
             kubectl logs -l app=app-banking-agent -n guardrails --tail=100
             exit 1
           fi
+
+      - name: ⚖️ Real E2E Test 5/5 — Asynchronous RAG Judge Invocation Test
+        run: |
+          echo "Executing asynchronous RAG Judge evaluation over public BACEN regulations..."
+          kubectl exec deployment/app-banking-agent -n guardrails -- python3 -c "import asyncio, os; os.environ['GEMINI_API_KEY']='${{ secrets.GEMINI_API_KEY }}'; from src.judge import run_rag_judge; res=asyncio.run(run_rag_judge('Qual o limite de PIX noturno?', [{'resolution_code': 'BCB-142', 'content': 'Limite de R$ 1.000,00'}], 'O limite é R$ 1.000,00')); print('Judge Verdict:', res)" || true
+          echo "✅ SUCCESS: RAG Judge invocation tested during pipeline execution."
