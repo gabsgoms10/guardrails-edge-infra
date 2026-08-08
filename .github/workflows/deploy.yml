@@ -51,6 +51,7 @@ jobs:
 
       - name: Apply Manifests to K3s Cluster & Force Pod Reload
         run: |
+          kubectl delete deployment mlflow service mlflow-service service mlflow-nodeport -n guardrails --ignore-not-found
           kubectl apply -k k3s/
           kubectl rollout restart deployment/nemo-guardrails-server -n guardrails
 
